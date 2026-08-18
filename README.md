@@ -38,17 +38,36 @@ This project demonstrates the complete Data Engineering lifecycle — **ingest �
 | 👥 **What if maintenance capacity is limited?** | Prioritize the highest-risk engines within the available planning capacity. |
 | 💰 **What is the economic trade-off?** | Evaluate explicit cost/downtime assumptions as scenarios rather than fabricated savings. |
 
-See the detailed decision framework in [`docs/business_insights.md`](docs/business_insights.md) and the evidence/analytics narrative in [`docs/portfolio_results.md`](docs/portfolio_results.md).
+See [`docs/business_insights.md`](docs/business_insights.md) and [`docs/portfolio_results.md`](docs/portfolio_results.md).
 
 ## 🏗️ Architecture
 
 **NASA C-MAPSS → ADF → ADLS Bronze → Databricks/PySpark → ADLS Silver/Gold → dbt → Synapse → Dashboard**
 
+## 🖼️ Visual project preview
+
+### 📊 Executive fleet dashboard
+
+<div align="center">
+<img src="assets/fleet-risk-dashboard.svg" alt="Aerospace Fleet Intelligence executive dashboard visual" width="100%" />
+</div>
+
+**What this visual answers:**
+
+- 🚨 Which engines are highest priority?
+- ⏱️ How does remaining useful life relate to health?
+- 🚦 Where is fleet risk concentrated?
+- 🔧 Which engines should enter the maintenance queue first?
+
+### 🗺️ Architecture visual
+
+<div align="center"><img src="assets/architecture.svg" alt="Aerospace Data Engineering architecture" width="100%" /></div>
+
 ## 📁 Repository structure
 
 ```text
 adf/                 Azure Data Factory datasets + pipelines
-assets/              Standalone SVG visuals
+assets/              Executive dashboard + architecture SVGs
 dashboard/           Streamlit + Plotly dashboard
 data/raw/            Raw-data policy / local source downloads
 data/reference/      Schema contracts and source metadata
@@ -69,11 +88,7 @@ tests/               Automated Python validation
 ADF accepts the dataset identifier, source location and Bronze destination. The pipeline is designed to keep ingestion separate from transformation so the source can be replayed.
 
 ### 2. 🗄️ Store — ADLS Gen2
-The lake follows a clean Bronze / Silver / Gold pattern:
-
-- **Bronze:** source-preserving ingestion
-- **Silver:** standardized engine × cycle telemetry
-- **Gold:** latest engine-health and maintenance-ready records
+The lake follows a clean Bronze / Silver / Gold pattern.
 
 ### 3. ⚙️ Transform — Databricks + PySpark
 PySpark applies explicit schemas, duplicate checks, RUL derivation, sensor features, health scoring and risk classification.
@@ -96,43 +111,19 @@ The dashboard converts Gold-layer data into fleet KPIs, risk ranking, RUL analys
 | 🟡 **WATCH** | Increase monitoring |
 | 🟢 **HEALTHY** | Routine monitoring |
 
-The health score is an **interpretable portfolio prioritization heuristic**, not a certified aircraft-health model.
-
-## 📈 Dashboard
-
-The dashboard is deliberately business-first rather than a generic data-science chart collection. It includes:
-
-- 📌 executive KPI cards
-- 🚦 risk distribution
-- ⏱️ RUL vs. health relationship
-- 🔧 maintenance queue
-- 💡 explicit business-question callouts
-- 🧭 capacity/intervention framing
-- 📚 source-backed context
-
-Run it with:
-
-```bash
-streamlit run dashboard/app.py
-```
-
-### Visual direction
-
-The project uses a dark aerospace/operations visual language with restrained emoji section markers and inline SVG architecture. Standalone SVGs are also stored under `assets/` for GitHub rendering and reuse.
-
-## 📊 Meaningful insights
+## 📈 Meaningful insights
 
 ### 🔎 Insight 1 — prioritize before failure
-C-MAPSS FD001 contains run-to-failure training trajectories and test trajectories that stop before failure. That makes **early-warning prioritization** the correct business story: use telemetry to decide which engines need attention before the endpoint rather than claiming to detect a failure after it happens.
+C-MAPSS FD001 contains run-to-failure training trajectories and test trajectories that stop before failure. The portfolio story is therefore **early-warning maintenance prioritization**, not post-failure detection.
 
 ### ⏱️ Insight 2 — RUL is the planning language
-RUL is expressed in operating cycles. That gives planners a consistent way to compare engine condition while the detailed Silver layer retains engine × cycle telemetry.
+RUL in operating cycles provides a consistent planning measure across engines while Silver retains the underlying engine × cycle telemetry.
 
-### 🔧 Insight 3 — a score is not enough
-The Gold layer converts risk into an action. This turns analytics into a maintenance queue rather than leaving the consumer with an unexplained model output.
+### 🔧 Insight 3 — analytics must lead to action
+Risk is translated into a maintenance action so the consumer gets a queue, not merely a score.
 
-### 💰 Insight 4 — economics must be assumption-driven
-Maintenance cost, downtime cost and intervention capacity are explicit scenario inputs. The project does **not** invent a dollar-saving claim from simulated data.
+### 💰 Insight 4 — economics stay assumption-driven
+Maintenance and downtime costs are explicit scenario inputs. The project does not invent financial savings from simulated data.
 
 ## 🗃️ Data source
 
@@ -140,7 +131,7 @@ Maintenance cost, downtime cost and intervention capacity are explicit scenario 
 
 https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
-The full archive is deliberately not committed to GitHub. Run `scripts/download_cmapss.py` when the complete source data is required. A schema contract is maintained in `data/reference/cmapss_schema.md`.
+The full archive is deliberately not committed to GitHub. Run `scripts/download_cmapss.py` when required.
 
 ## 🧪 Data quality
 
@@ -165,8 +156,6 @@ Managed Identity + Key Vault, Purview/Unity Catalog governance, metadata-driven 
 - [`docs/business_insights.md`](docs/business_insights.md)
 - [`docs/portfolio_results.md`](docs/portfolio_results.md)
 - [`docs/portfolio_walkthrough.md`](docs/portfolio_walkthrough.md)
-- [`dbt/README.md`](dbt/README.md)
-- [`data/raw/README.md`](data/raw/README.md)
 
 ## 👨‍💻 Author
 
