@@ -12,7 +12,7 @@
 
 This project demonstrates how an aerospace telemetry platform can move from **raw engine-cycle data → governed transformations → analytical models → warehouse views → maintenance decision support**.
 
-The benchmark is **NASA C-MAPSS FD001**, a simulated turbofan-engine degradation dataset. FD001 contains 100 training trajectories and 100 test trajectories, with 3 operating settings and 21 sensor measurements. NASA describes the training trajectories as run-to-failure and the test trajectories as truncated before failure, with a separate true-RUL vector for evaluation. citeturn0search0
+The benchmark is **NASA C-MAPSS FD001**, a simulated turbofan-engine degradation dataset. FD001 contains 100 training trajectories and 100 test trajectories, with 3 operating settings and 21 sensor measurements. NASA describes the training trajectories as run-to-failure and the test trajectories as truncated before failure, with a separate true-RUL vector for evaluation.
 
 ### ⚠️ Credibility boundary
 
@@ -67,7 +67,7 @@ The evidence layer is based on the **100-engine FD001 test RUL vector**, not fab
 | 🟡 Watch 61–90 cycles | **15 engines / 15%** |
 | 🟢 Healthy >90 cycles | **46 engines / 46%** |
 
-These dataset-size figures are consistent with published FD001 descriptions: 100 training engines, 100 test engines, 20,631 training records and 13,096 test records. citeturn0search3
+These dataset-size figures are consistent with published FD001 descriptions: 100 training engines, 100 test engines, 20,631 training records and 13,096 test records.
 
 ### 📸 Evidence artifact
 
@@ -89,7 +89,7 @@ The visual above is generated from the committed machine-readable result artifac
 
 `E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), E056 (15)`
 
-**5. The benchmark ground truth is evaluation-only.** NASA explicitly provides the true RUL vector for test evaluation; a real prospective system cannot use those future labels at decision time. citeturn0search0
+**5. The benchmark ground truth is evaluation-only.** NASA explicitly provides the true RUL vector for test evaluation; a real prospective system cannot use those future labels at decision time.
 
 ## 📊 Dashboard
 
@@ -158,7 +158,7 @@ The intended lake layout is:
 ```text
 bronze/   source-preserving files
 silver/   typed engine × cycle telemetry
- gold/    latest-engine analytical records
+gold/     latest-engine analytical records
 ```
 
 Raw source archives are intentionally excluded from Git history. See [`data/raw/README.md`](data/raw/README.md).
@@ -300,7 +300,7 @@ See [`assets/README.md`](assets/README.md).
 
 https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
-NASA describes C-MAPSS as simulated multivariate time-series engine data and explicitly provides true RUL values for test-set evaluation. citeturn0search0
+NASA describes C-MAPSS as simulated multivariate time-series engine data and explicitly provides true RUL values for test-set evaluation.
 
 ## 🚀 Production roadmap
 
