@@ -3,8 +3,9 @@ version: 2
 sources:
   - name: aerospace
     description: "Synapse-ready Gold engine-health contract produced by the PySpark layer."
+    schema: dbo
     tables:
-      - name: engine_health
+      - name: fct_engine_health
         columns:
           - name: engine_id
             tests: [not_null]
