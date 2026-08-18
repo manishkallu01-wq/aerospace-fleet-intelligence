@@ -4,15 +4,35 @@
     "parameters": {
       "dataset_id": {"type": "string", "defaultValue": "FD001"},
       "source_url": {"type": "string"},
-      "bronze_path": {"type": "string", "defaultValue": "bronze/cmapss"}
+      "bronze_filesystem": {"type": "string", "defaultValue": "aerospace"},
+      "bronze_folder": {"type": "string", "defaultValue": "bronze/cmapss"}
     },
     "activities": [
       {
         "name": "Copy_CMAPSS_to_ADLS_Bronze",
         "type": "Copy",
-        "inputs": [{"referenceName": "ds_nasa_cmapss", "type": "DatasetReference", "parameters": {"source_url": "@pipeline().parameters.source_url"}}],
-        "outputs": [],
-        "typeProperties": {"source": {"type": "HttpSource"}, "sink": {"type": "BinarySink"}}
+        "inputs": [
+          {
+            "referenceName": "ds_nasa_cmapss",
+            "type": "DatasetReference",
+            "parameters": {"source_url": "@pipeline().parameters.source_url"}
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "ds_adls_bronze",
+            "type": "DatasetReference",
+            "parameters": {
+              "filesystem": "@pipeline().parameters.bronze_filesystem",
+              "folder": "@pipeline().parameters.bronze_folder"
+            }
+          }
+        ],
+        "typeProperties": {
+          "source": {"type": "BinarySource", "storeSettings": {"type": "HttpReadSettings", "requestMethod": "GET"}},
+          "sink": {"type": "BinarySink", "storeSettings": {"type": "AzureBlobFSWriteSettings"}},
+          "enableStaging": false
+        }
       }
     ]
   }
