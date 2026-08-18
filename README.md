@@ -42,6 +42,43 @@ The dashboard is intentionally designed like an operations product rather than a
 | 🚨 Alerts | What requires immediate attention? |
 | 💡 Key insights | What action should management take? |
 
+## 🔬 Executed analysis — actual FD001 results
+
+This section is the **evidence layer** of the portfolio. These values are derived from the 100-engine FD001 test RUL labels rather than invented dashboard KPIs.
+
+| Metric | Result |
+|---|---:|
+| ✈️ Test engines | **100** |
+| 🧾 Test records | **13,096** |
+| 🏭 Training records | **20,631** |
+| 📡 Sensor channels | **21** |
+| ⏱️ Mean true RUL | **75.52 cycles** |
+| 📍 Median true RUL | **86 cycles** |
+| 🔻 Minimum true RUL | **7 cycles** |
+| 🔺 Maximum true RUL | **145 cycles** |
+| 🔴 Critical ≤30 cycles | **25 engines (25%)** |
+| 🟠 High 31–60 cycles | **14 engines (14%)** |
+| 🔧 Maintenance queue ≤60 | **39 engines (39%)** |
+| 🟡 Watch 61–90 cycles | **15 engines (15%)** |
+| 🟢 Healthy >90 cycles | **46 engines (46%)** |
+
+### 📸 Executed-results screenshot
+
+<div align="center"><img src="reports/fd001_execution_results.svg" alt="Executed NASA C-MAPSS FD001 results with actual RUL metrics and maintenance priorities" width="100%" /></div>
+
+### 💡 What the numbers tell us
+
+1. **39% of the test fleet falls into the maintenance queue** using the project threshold of ≤60 RUL cycles.
+2. **25% is critical** at ≤30 cycles — the lower tail needs attention even though the fleet-wide mean is 75.52 cycles.
+3. The RUL range is wide: **7 to 145 cycles**, showing substantial heterogeneity across engines.
+4. The ten lowest-RUL engines are **E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), E056 (15)**.
+5. The median of **86 cycles** is substantially above the minimum, demonstrating why a single fleet-average KPI is insufficient for maintenance prioritization.
+
+> ⚠️ **Important analytical distinction:** these are benchmark **ground-truth RUL labels used for evaluation**. A prospective operational system would use model predictions/Gold-layer estimates available at decision time; it must not expose future true RUL as if it were known to an operator.
+
+➡️ **Full machine-readable output:** [`reports/fd001_engine_rul.csv`](reports/fd001_engine_rul.csv)  
+➡️ **Full execution report:** [`reports/README.md`](reports/README.md)
+
 ## 💡 Key portfolio insights
 
 ### 🚨 1. Prioritize before failure
@@ -110,6 +147,7 @@ databricks/          PySpark Bronze → Silver → Gold jobs
 dbt/                 Staging models, marts and tests
 docs/                Architecture, runbook, insights, results
 notebooks/           Reproducible exploratory analytics
+reports/             Executed metrics, CSV output, evidence visuals
 scripts/             Source-data acquisition
 src/                 Reusable Python analytics logic
 synapse/             Warehouse DDL + business views
@@ -160,6 +198,7 @@ Managed Identity + Key Vault, Purview/Unity Catalog governance, metadata-driven 
 - [`docs/business_insights.md`](docs/business_insights.md)
 - [`docs/portfolio_results.md`](docs/portfolio_results.md)
 - [`docs/portfolio_walkthrough.md`](docs/portfolio_walkthrough.md)
+- [`reports/README.md`](reports/README.md)
 
 ## 👨‍💻 Author
 
