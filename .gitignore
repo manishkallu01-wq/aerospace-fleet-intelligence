@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+.DS_Store
+*.pyc
+# Full source data is downloaded locally and is intentionally not committed
+data/raw/cmapss_source.zip
+data/raw/extracted/
+data/processed/*
