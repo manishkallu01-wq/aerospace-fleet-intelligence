@@ -1,0 +1,33 @@
+version: 2
+
+sources:
+  - name: aerospace
+    description: "Synapse-ready Gold engine-health contract produced by the PySpark layer."
+    tables:
+      - name: engine_health
+        columns:
+          - name: engine_id
+            tests: [not_null]
+          - name: cycle
+            tests: [not_null]
+          - name: risk_band
+            tests:
+              - accepted_values:
+                  values: ['CRITICAL', 'HIGH', 'WATCH', 'HEALTHY']
+
+models:
+  - name: stg_engine_health
+    columns:
+      - name: engine_id
+        tests: [not_null]
+      - name: cycle
+        tests: [not_null]
+
+  - name: fct_maintenance_opportunity
+    columns:
+      - name: engine_id
+        tests: [not_null]
+      - name: risk_band
+        tests:
+          - accepted_values:
+              values: ['CRITICAL', 'HIGH', 'WATCH', 'HEALTHY']
