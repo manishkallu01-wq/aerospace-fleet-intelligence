@@ -1,0 +1,18 @@
+{
+  "name": "ds_adls_bronze",
+  "properties": {
+    "linkedServiceName": {"referenceName": "ls_adls_gen2", "type": "LinkedServiceReference"},
+    "parameters": {
+      "filesystem": {"type": "string", "defaultValue": "aerospace"},
+      "folder": {"type": "string", "defaultValue": "bronze/cmapss"}
+    },
+    "type": "Binary",
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobFSLocation",
+        "fileSystem": "@dataset().filesystem",
+        "folderPath": "@dataset().folder"
+      }
+    }
+  }
+}
