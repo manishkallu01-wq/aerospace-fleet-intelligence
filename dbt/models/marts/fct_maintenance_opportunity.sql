@@ -3,8 +3,7 @@
 select
     engine_id,
     cycle,
-    rul,
-    health_score,
+    condition_age_proxy,
     risk_band,
     case
         when risk_band = 'CRITICAL' then 'Immediate review'
