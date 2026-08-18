@@ -1,0 +1,9 @@
+{
+  "name": "ls_http_nasa",
+  "properties": {
+    "type": "HttpServer",
+    "typeProperties": {
+      "url": "https://data.nasa.gov"
+    }
+  }
+}
