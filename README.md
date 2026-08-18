@@ -1,6 +1,6 @@
 # ✈️ Aerospace Fleet Intelligence
 
-> **Azure Data Engineering portfolio project** for aerospace predictive-maintenance analytics using NASA C-MAPSS turbofan-engine degradation data.
+> **Azure Data Engineering portfolio project** for aerospace maintenance and Remaining Useful Life (RUL) analytics using NASA C-MAPSS turbofan-engine degradation data.
 
 **ADF → ADLS Gen2 → Databricks / PySpark → dbt → Synapse Analytics → Dashboard**
 
@@ -261,7 +261,7 @@ pytest -q
 │   ├── models/marts/        Analytical marts
 │   ├── dbt_project.yml      dbt configuration
 │   └── profiles.example.yml Synapse profile template
-├── docs/                    Architecture, runbook, insights
+├── docs/                    Architecture, runbook, insights, results
 ├── notebooks/               Executable analysis notebook + specification
 ├── reports/                 Executed metrics + CSV + visual evidence
 ├── scripts/                 Source acquisition
@@ -288,6 +288,7 @@ See [`assets/README.md`](assets/README.md).
 ## 📚 Documentation
 
 - [`docs/architecture.md`](docs/architecture.md)
+- [`docs/data_dictionary.md`](docs/data_dictionary.md)
 - [`docs/runbook.md`](docs/runbook.md)
 - [`docs/business_insights.md`](docs/business_insights.md)
 - [`docs/portfolio_results.md`](docs/portfolio_results.md)
