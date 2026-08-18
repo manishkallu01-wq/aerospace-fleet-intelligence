@@ -2,53 +2,54 @@
 
 ## Why this project matters
 
-Aerospace telemetry has value only when it can be converted into a repeatable decision workflow. This project turns engine-cycle observations into an analytical layer that helps a maintenance planner answer **where to look, when to intervene, and how to prioritize limited capacity**.
+Aerospace telemetry has value only when it can be converted into a repeatable decision workflow. This project demonstrates the engineering path from engine-cycle observations to an analytical maintenance-prioritization layer.
 
 ## 🔎 Insight 1 — prioritize before failure
 
-NASA C-MAPSS FD001 provides run-to-failure training trajectories and test trajectories that stop before failure. That makes **early-warning prioritization** the right business framing for this portfolio project.
+NASA C-MAPSS FD001 contains run-to-failure training trajectories and truncated test trajectories. The benchmark's true RUL vector exists for **evaluation**, not as information available to an operator before failure.
 
-**Decision:** rank engines by remaining useful life and health/risk rather than waiting for a failure event.
+**Decision framing:** evaluate a prospective RUL model against the ground truth, then use the model's prediction—not the future label—to rank engines operationally.
 
 ## ⏱️ Insight 2 — RUL is a planning measure
 
-RUL is represented in operating cycles. It gives the business a common planning scale across engines while the detailed Silver layer retains the underlying engine × cycle telemetry.
+RUL is expressed in operating cycles. In the committed FD001 evidence, the mean is **75.52 cycles**, the median is **86**, and the observed range is **7–145 cycles**.
 
-**Decision:** use RUL bands to support maintenance scheduling and escalation, while avoiding claims that a portfolio heuristic is a certified maintenance prediction.
+**Decision:** do not use the mean alone. The lower tail contains the engines that would require the earliest attention.
 
-## 🚦 Insight 3 — convert scores into actions
+## 🚦 Insight 3 — transparent evaluation bands
 
-A score alone is not a business product. The Gold layer maps risk into an explicit action:
+For the benchmark report, the project uses simple thresholds to turn the ground-truth evaluation vector into an explainable planning view:
 
-| Risk | Decision |
-|---|---|
-| CRITICAL | Immediate review |
-| HIGH | Schedule intervention |
-| WATCH | Increase monitoring |
-| HEALTHY | Routine monitoring |
+| RUL | Band | Decision framing |
+|---:|---|---|
+| ≤30 | 🔴 CRITICAL | Immediate review |
+| 31–60 | 🟠 HIGH | Schedule intervention |
+| 61–90 | 🟡 WATCH | Increase monitoring |
+| >90 | 🟢 HEALTHY | Routine monitoring |
 
-**Decision:** create a maintenance queue that can be handed to a planner instead of presenting an unexplained model output.
+These thresholds are **portfolio analysis conventions**, not aviation maintenance limits.
 
-## 📈 Insight 4 — measure capacity pressure
+## 🔧 Insight 4 — analytics must become an action
 
-Maintenance capacity is finite. The dashboard therefore supports scenario assumptions for intervention thresholds and available capacity.
+A useful engineering product should expose a ranked maintenance queue, not just a model score. The dbt and Synapse layers therefore provide a queue-shaped analytical contract.
 
-Example question:
+For the executed FD001 evidence, **39 of 100 engines (39%)** are at or below 60 cycles and **25 (25%)** are at or below 30 cycles.
 
-> **If the maintenance team can handle only N engines in the next planning window, which engines enter the queue first?**
+## 📈 Insight 5 — separate benchmark truth from prospective prediction
 
-The answer should be generated from Gold/Synapse data rather than manually selected records.
+The repository intentionally has two analytical states:
 
-## 💰 Insight 5 — keep economics explicit
+1. **Evaluation:** true RUL labels are used to measure and inspect benchmark behavior.
+2. **Prospective production design:** a separately trained/evaluated RUL model supplies predictions from data available at decision time.
 
-The project supports scenario variables for planned maintenance cost, unplanned failure cost and downtime cost. These are **user-provided assumptions**, not claimed aerospace financial benchmarks.
+Keeping those states separate prevents target leakage and makes the portfolio more credible.
 
-This makes the analytics useful for portfolio discussion without fabricating a dollar-saving result.
+## 💰 Insight 6 — keep economics explicit
+
+Maintenance cost, downtime cost and intervention capacity are scenario inputs. The repository does **not** claim fabricated dollar savings from simulated data.
 
 ## 🎯 Interview takeaway
 
-The strongest story is:
+> **I built the data-platform design and executed the benchmark evidence layer end-to-end, then separated evaluation truth from the prospective production architecture so future RUL labels are never presented as operationally available information.**
 
-> **I built a cloud data platform that ingests aerospace telemetry, processes it at scale with PySpark, models tested business marts with dbt, serves them through Synapse, and converts engine-health data into an actionable maintenance-priority dashboard.**
-
-That demonstrates the complete Data Engineering lifecycle — not just a prediction notebook.
+That distinction demonstrates data engineering maturity as well as analytics awareness.
