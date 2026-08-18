@@ -1,0 +1,9 @@
+{
+  "name": "ds_nasa_cmapss",
+  "properties": {
+    "linkedServiceName": {"referenceName": "ls_http_nasa", "type": "LinkedServiceReference"},
+    "parameters": {"source_url": {"type": "string"}},
+    "type": "HttpFile",
+    "typeProperties": {"relativeUrl": "@dataset().source_url", "requestMethod": "GET"}
+  }
+}
