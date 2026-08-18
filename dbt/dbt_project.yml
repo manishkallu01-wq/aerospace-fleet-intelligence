@@ -1,0 +1,13 @@
+name: aerospace_fleet_intelligence
+version: '1.0.0'
+config-version: 2
+profile: aerospace_fleet_intelligence
+
+model-paths: ["models"]
+
+models:
+  aerospace_fleet_intelligence:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
