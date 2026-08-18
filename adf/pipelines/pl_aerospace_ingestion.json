@@ -1,0 +1,19 @@
+{
+  "name": "pl_aerospace_ingestion",
+  "properties": {
+    "parameters": {
+      "dataset_id": {"type": "string", "defaultValue": "FD001"},
+      "source_url": {"type": "string"},
+      "bronze_path": {"type": "string", "defaultValue": "bronze/cmapss"}
+    },
+    "activities": [
+      {
+        "name": "Copy_CMAPSS_to_ADLS_Bronze",
+        "type": "Copy",
+        "inputs": [{"referenceName": "ds_nasa_cmapss", "type": "DatasetReference", "parameters": {"source_url": "@pipeline().parameters.source_url"}}],
+        "outputs": [],
+        "typeProperties": {"source": {"type": "HttpSource"}, "sink": {"type": "BinarySink"}}
+      }
+    ]
+  }
+}
