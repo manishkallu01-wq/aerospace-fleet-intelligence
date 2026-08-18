@@ -1,0 +1,10 @@
+{
+  "name": "ls_adls_gen2",
+  "properties": {
+    "type": "AzureBlobFS",
+    "typeProperties": {
+      "url": "https://<storage-account>.dfs.core.windows.net"
+    },
+    "annotations": ["portfolio-template", "no-secret-embedded"]
+  }
+}
