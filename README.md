@@ -38,7 +38,7 @@ This project demonstrates the complete Data Engineering lifecycle — **ingest �
 | 👥 **What if maintenance capacity is limited?** | Prioritize the highest-risk engines within the available planning capacity. |
 | 💰 **What is the economic trade-off?** | Evaluate explicit cost/downtime assumptions as scenarios rather than fabricated savings. |
 
-See the detailed decision framework in [`docs/business_insights.md`](docs/business_insights.md).
+See the detailed decision framework in [`docs/business_insights.md`](docs/business_insights.md) and the evidence/analytics narrative in [`docs/portfolio_results.md`](docs/portfolio_results.md).
 
 ## 🏗️ Architecture
 
@@ -49,14 +49,14 @@ See the detailed decision framework in [`docs/business_insights.md`](docs/busine
 ```text
 adf/                 Azure Data Factory datasets + pipelines
 assets/              Standalone SVG visuals
- dashboard/           Streamlit + Plotly dashboard
+dashboard/           Streamlit + Plotly dashboard
 data/raw/            Raw-data policy / local source downloads
 data/reference/      Schema contracts and source metadata
 databricks/          PySpark Bronze → Silver → Gold jobs
 dbt/                 Staging models, marts and tests
-docs/                Architecture, runbook, insights, walkthrough
-notebooks/            Reproducible exploratory analytics
-scripts/              Source-data acquisition
+docs/                Architecture, runbook, insights, results
+notebooks/           Reproducible exploratory analytics
+scripts/             Source-data acquisition
 src/                 Reusable Python analytics logic
 synapse/             Warehouse DDL + business views
 tests/               Automated Python validation
@@ -66,11 +66,9 @@ tests/               Automated Python validation
 ## 🔄 Data engineering flow
 
 ### 1. 🛬 Ingest — Azure Data Factory
-
 ADF accepts the dataset identifier, source location and Bronze destination. The pipeline is designed to keep ingestion separate from transformation so the source can be replayed.
 
 ### 2. 🗄️ Store — ADLS Gen2
-
 The lake follows a clean Bronze / Silver / Gold pattern:
 
 - **Bronze:** source-preserving ingestion
@@ -78,19 +76,15 @@ The lake follows a clean Bronze / Silver / Gold pattern:
 - **Gold:** latest engine-health and maintenance-ready records
 
 ### 3. ⚙️ Transform — Databricks + PySpark
-
 PySpark applies explicit schemas, duplicate checks, RUL derivation, sensor features, health scoring and risk classification.
 
 ### 4. 🧪 Model — dbt
-
 dbt creates reusable analytical models and validates uniqueness, relationships, accepted risk values and health-score boundaries.
 
 ### 5. 🏢 Serve — Synapse
-
 Synapse exposes curated warehouse tables and business views for downstream analytics.
 
 ### 6. 📊 Decide — Dashboard
-
 The dashboard converts Gold-layer data into fleet KPIs, risk ranking, RUL analysis and maintenance actions.
 
 ## 🚦 Risk framework
@@ -129,19 +123,15 @@ The project uses a dark aerospace/operations visual language with restrained emo
 ## 📊 Meaningful insights
 
 ### 🔎 Insight 1 — prioritize before failure
-
 C-MAPSS FD001 contains run-to-failure training trajectories and test trajectories that stop before failure. That makes **early-warning prioritization** the correct business story: use telemetry to decide which engines need attention before the endpoint rather than claiming to detect a failure after it happens.
 
 ### ⏱️ Insight 2 — RUL is the planning language
-
 RUL is expressed in operating cycles. That gives planners a consistent way to compare engine condition while the detailed Silver layer retains engine × cycle telemetry.
 
 ### 🔧 Insight 3 — a score is not enough
-
 The Gold layer converts risk into an action. This turns analytics into a maintenance queue rather than leaving the consumer with an unexplained model output.
 
 ### 💰 Insight 4 — economics must be assumption-driven
-
 Maintenance cost, downtime cost and intervention capacity are explicit scenario inputs. The project does **not** invent a dollar-saving claim from simulated data.
 
 ## 🗃️ Data source
@@ -173,6 +163,7 @@ Managed Identity + Key Vault, Purview/Unity Catalog governance, metadata-driven 
 - [`docs/architecture.md`](docs/architecture.md)
 - [`docs/runbook.md`](docs/runbook.md)
 - [`docs/business_insights.md`](docs/business_insights.md)
+- [`docs/portfolio_results.md`](docs/portfolio_results.md)
 - [`docs/portfolio_walkthrough.md`](docs/portfolio_walkthrough.md)
 - [`dbt/README.md`](dbt/README.md)
 - [`data/raw/README.md`](data/raw/README.md)
