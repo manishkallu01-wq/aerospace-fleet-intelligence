@@ -1,74 +1,136 @@
 # ✈️ Aerospace Fleet Intelligence
 
-> End-to-end Azure Data Engineering project that turns NASA C-MAPSS engine-degradation data into a clean, testable, business-facing analytics platform.
+> **Clean, production-style Data Engineering portfolio project** for turning NASA C-MAPSS turbofan engine telemetry into governed fleet-health and maintenance analytics.
 
-**ADF → ADLS Gen2 → Databricks / PySpark → dbt → Synapse Analytics → Dashboard**
+**Azure Data Factory → ADLS Gen2 → Databricks / PySpark → dbt → Synapse Analytics → Dashboard**
 
-<div align="center"><img src="assets/project-overview.png" alt="Aerospace Fleet Intelligence overview" width="100%" /></div>
+<div align="center">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="250" viewBox="0 0 1100 250" role="img" aria-label="Aerospace Fleet Intelligence architecture overview">
+<rect width="1100" height="250" rx="20" fill="#07111f"/>
+<text x="40" y="42" fill="#ffffff" font-family="Arial" font-size="24" font-weight="700">Aerospace Fleet Intelligence</text>
+<text x="40" y="66" fill="#94a3b8" font-family="Arial" font-size="12">Telemetry → governed lake → distributed processing → warehouse → decisions</text>
+<g font-family="Arial" text-anchor="middle">
+<g fill="#102039" stroke="#38bdf8"><rect x="35" y="100" width="135" height="70" rx="12"/><rect x="190" y="100" width="135" height="70" rx="12"/><rect x="345" y="100" width="135" height="70" rx="12"/><rect x="500" y="100" width="135" height="70" rx="12"/><rect x="655" y="100" width="135" height="70" rx="12"/><rect x="810" y="100" width="135" height="70" rx="12"/><rect x="965" y="100" width="100" height="70" rx="12"/></g>
+<g fill="#38bdf8" font-size="10" font-weight="700"><text x="102" y="125">SOURCE</text><text x="257" y="125">INGEST</text><text x="412" y="125">LAKE</text><text x="567" y="125">PROCESS</text><text x="722" y="125">MODEL</text><text x="877" y="125">SERVE</text><text x="1015" y="125">BI</text></g>
+<g fill="#fff" font-size="12"><text x="102" y="147">NASA C-MAPSS</text><text x="257" y="147">ADF</text><text x="412" y="147">ADLS Gen2</text><text x="567" y="147">Databricks</text><text x="722" y="147">dbt</text><text x="877" y="147">Synapse</text><text x="1015" y="147">Dashboard</text></g>
+</g>
+<g stroke="#8b5cf6" stroke-width="3"><path d="M170 135h20M325 135h20M480 135h20M635 135h20M790 135h20M945 135h20"/></g>
+<text x="40" y="215" fill="#a5b4fc" font-family="Arial" font-size="12">Fleet health • RUL • degradation • maintenance priority • scenario economics • data quality</text>
+</svg>
+</div>
 
-## Overview
+> **Portfolio note:** C-MAPSS is simulated engine-degradation data. This project demonstrates data-engineering architecture and analytics patterns; it is not a certified aircraft safety or maintenance system.
 
-This portfolio project demonstrates the full data-engineering path from raw aerospace telemetry to analytical decisions. It focuses on **ingestion, lakehouse design, distributed processing, data quality, dimensional modeling, warehouse serving, and business analytics** rather than a standalone ML notebook.
+## 1. What this project demonstrates
 
-### Business questions
+This project is intentionally structured like a real Data Engineering repository rather than a single notebook. It covers:
 
-- Which engines should maintenance planners review first?
-- How does remaining useful life (RUL) change across the fleet?
-- Which engines show stronger degradation or sensor instability?
-- How should maintenance opportunities be prioritized?
-- What does a maintenance strategy look like under explicit cost and capacity assumptions?
+- **Ingestion:** parameterized Azure Data Factory pipeline
+- **Storage:** ADLS Gen2 Bronze / Silver / Gold lake design
+- **Distributed processing:** Databricks + PySpark transformations
+- **Lakehouse:** Delta-ready analytical outputs
+- **Transformation:** dbt staging, marts and data-quality tests
+- **Warehouse:** Synapse serving layer and business views
+- **Analytics:** fleet-health, RUL, risk and maintenance prioritization
+- **Dashboard:** Streamlit business-facing operational view
+- **Quality:** schema contracts, validation, tests and CI
+- **Documentation:** architecture, runbook and interview walkthrough
 
-> **Scope:** C-MAPSS is simulated engine-degradation data. This is an independent portfolio implementation, not a certified aviation maintenance or safety system.
+## 2. Business problem
 
-## Architecture
+Maintenance teams need a repeatable way to turn high-volume engine telemetry into a prioritized view of fleet condition. The analytical layer answers:
 
-<div align="center"><img src="assets/architecture.svg" alt="Azure aerospace data engineering architecture" width="100%" /></div>
+1. Which engines deserve attention first?
+2. How much remaining useful life is visible across the fleet?
+3. Which engines exhibit stronger degradation or instability?
+4. How should maintenance opportunities be prioritized?
+5. How do intervention assumptions change the maintenance queue and scenario economics?
 
-## Repository structure
+## 3. Repository structure
 
 ```text
-adf/                 ADF datasets and parameterized ingestion pipeline
-assets/              SVG diagrams and project visual
-dashboard/           Streamlit business dashboard
-data/raw/            Small C-MAPSS-shaped sample + source documentation
-data/reference/      Source schema metadata
-data/processed/      Contract for ADLS-derived outputs
-databricks/          PySpark Bronze → Silver → Gold notebooks
-dbt/                 Staging, marts, tests and Synapse profile example
-docs/                Runbook, architecture and interview walkthrough
-notebooks/            Local profiling and business-analytics notebooks
-scripts/              NASA dataset acquisition helper
-src/                 Reusable Python analytics logic
-synapse/             Warehouse DDL and business views
-tests/               Python unit tests
-.github/workflows/   CI validation
+.
+├── adf/                         # Azure Data Factory metadata
+│   ├── datasets/                # Dataset definitions
+│   └── pipelines/               # Parameterized ingestion pipelines
+├── assets/                      # Standalone SVG design artifacts / fallback previews
+├── dashboard/                   # Streamlit + Plotly application
+├── data/
+│   ├── raw/                     # Source-data policy + optional local downloads
+│   ├── reference/               # Schema and metadata contracts
+│   └── processed/               # Gold output contract
+├── databricks/                  # PySpark Bronze → Silver → Gold jobs
+├── dbt/
+│   ├── models/staging/          # Source-standardization models
+│   ├── models/marts/            # Business-facing marts
+│   └── tests/                   # Data-quality assertions
+├── docs/                        # Runbook, architecture and portfolio walkthrough
+├── notebooks/                   # Reproducible exploratory analytics
+├── scripts/                     # Data acquisition / utility scripts
+├── src/                         # Reusable Python analytics functions
+├── synapse/                     # Warehouse DDL and business views
+├── tests/                       # Python tests
+├── .github/workflows/           # CI
+├── .gitignore
+├── requirements.txt
+└── README.md
 ```
 
-## Technology stack
+## 4. Technology stack
 
-| Layer | Technology | Purpose |
+| Layer | Technology | Responsibility |
 |---|---|---|
-| Ingestion | Azure Data Factory | Parameterized source ingestion and orchestration |
-| Lake | ADLS Gen2 | Bronze / Silver / Gold storage |
-| Processing | Databricks + PySpark | Distributed cleansing and feature engineering |
-| Tables | Delta Lake | Replayable lakehouse outputs |
-| Modeling | dbt | SQL models, tests and documentation |
-| Warehouse | Azure Synapse Analytics | Curated SQL serving layer |
-| Analytics | Streamlit + Plotly | Fleet and maintenance dashboard |
-| CI | GitHub Actions | Automated test validation |
+| Source | NASA C-MAPSS | Open simulated aerospace telemetry |
+| Ingestion | **Azure Data Factory** | Parameterized ingestion and orchestration |
+| Storage | **ADLS Gen2** | Durable Bronze/Silver/Gold zones |
+| Processing | **Azure Databricks + PySpark** | Distributed cleansing and feature engineering |
+| Table format | **Delta Lake** | Reliable lakehouse outputs |
+| Modeling | **dbt** | Modular SQL, tests and marts |
+| Warehouse | **Azure Synapse Analytics** | Analytical serving layer |
+| Dashboard | **Streamlit + Plotly** | Business analytics |
+| Quality | **pytest + dbt tests** | Automated validation |
+| CI/CD | **GitHub Actions** | Pull-request and push validation |
 
-## Data flow
+## 5. End-to-end data flow
 
-1. **ADF** copies the selected NASA dataset into the ADLS Bronze zone.
-2. **Databricks/PySpark** enforces schema, removes engine/cycle duplicates, derives RUL and sensor features, calculates health, and applies quality gates.
-3. **Gold** produces an engine-level analytical snapshot.
-4. **dbt** builds `dim_engine`, `fct_engine_health`, `fct_maintenance_opportunity`, and `mart_fleet_kpis` with tests.
-5. **Synapse** exposes curated tables and business views.
-6. **Dashboard** presents fleet risk, RUL, maintenance priority, and scenario economics.
+### Bronze — preserve the source
 
-## Business analytics
+ADF copies the selected C-MAPSS dataset into ADLS without applying business transformations. This creates a replayable ingestion boundary.
 
-### Health score
+### Silver — clean and enrich
+
+Databricks/PySpark:
+
+- applies an explicit schema
+- removes duplicate engine/cycle records
+- validates cycle values
+- derives remaining useful life
+- calculates sensor summaries and instability indicators
+- produces a standardized analytical dataset
+
+### Gold — create a decision layer
+
+The Gold output contains the latest engine-health snapshot with RUL, health score and actionable risk band.
+
+### dbt — model and test
+
+The dbt layer creates reusable analytical models:
+
+- `stg_engine_health`
+- `mart_fleet_kpis`
+- `fct_maintenance_opportunity`
+
+Tests cover uniqueness, accepted risk values, relationships and health-score boundaries.
+
+### Synapse — serve the business
+
+Synapse exposes curated warehouse objects and views for dashboard consumption.
+
+## 6. Business analytics
+
+### Fleet health score
+
+The project uses an interpretable prioritization heuristic:
 
 ```text
 Health Score =
@@ -78,34 +140,54 @@ Health Score =
   + 0.15 × Cycle Age Risk
 ```
 
-Risk bands are intentionally actionable:
+Risk bands translate the analytical score into operational actions:
 
-| Risk | Action |
+| Risk | Recommended action |
 |---|---|
-| CRITICAL | Immediate review |
-| HIGH | Schedule intervention |
-| WATCH | Increase monitoring |
-| HEALTHY | Routine monitoring |
+| **CRITICAL** | Immediate review |
+| **HIGH** | Schedule intervention |
+| **WATCH** | Increase monitoring |
+| **HEALTHY** | Routine monitoring |
 
-The dashboard also exposes editable assumptions for maintenance cost, failure cost, downtime, capacity, and RUL threshold. Results are **scenario estimates**, not real operational savings.
+### Maintenance scenario analysis
 
-## Dashboard preview
+The dashboard supports editable assumptions for:
 
-<div align="center"><img src="assets/dashboard.svg" alt="Aerospace fleet dashboard preview" width="100%" /></div>
+- planned maintenance cost
+- unplanned failure cost
+- downtime cost
+- maintenance capacity
+- intervention RUL threshold
 
-> Dashboard values are illustrative portfolio-preview values, not NASA measurements or production claims.
+Outputs are clearly presented as **scenario estimates**, not real financial results.
 
-## Data source
+## 7. Dashboard
 
-**NASA — CMAPSS Jet Engine Simulated Data**
+The dashboard is designed around business questions rather than engineering logs:
+
+- fleet KPI cards
+- risk distribution
+- engine RUL ranking
+- health vs. RUL relationship
+- maintenance opportunity queue
+- scenario economics
+- filters for engine/risk status
+
+The visual preview is maintained as SVG in `assets/dashboard.svg`; the README architecture above is also embedded directly as SVG markup.
+
+## 8. Data source
+
+**NASA — C-MAPSS Jet Engine Simulated Data**
 
 https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
-NASA describes the dataset as multivariate engine time series containing operational settings, sensor measurements, sensor noise, training/test trajectories and RUL information. The repository keeps only a small sample; the full archive is downloaded locally with `scripts/download_cmapss.py` and ignored by Git.
+The source contains multivariate engine time-series data with operational settings, sensor measurements and degradation trajectories. The full archive is deliberately **not committed** to GitHub. Use `scripts/download_cmapss.py` when the full dataset is required.
 
-## Run locally
+## 9. Run locally
 
 ```bash
+git clone https://github.com/manishkallu01-wq/aerospace-fleet-intelligence.git
+cd aerospace-fleet-intelligence
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -113,55 +195,54 @@ pytest -q
 streamlit run dashboard/app.py
 ```
 
-Download the full source archive when required:
+Download source data:
 
 ```bash
 python scripts/download_cmapss.py
 ```
 
-## Azure deployment path
+## 10. Azure deployment path
 
-1. Create an ADLS Gen2 `aerospace` filesystem.
+1. Provision ADLS Gen2 and create an `aerospace` filesystem.
 2. Configure ADF HTTP and ADLS linked services using managed identity where possible.
-3. Import `adf/datasets/*.json` and `adf/pipelines/pl_aerospace_ingestion.json`.
-4. Import the Databricks notebooks and pass `dataset_id` as a job parameter.
-5. Run Bronze → Silver → Gold processing.
-6. Execute `synapse/01_create_schema.sql` and `synapse/02_business_views.sql`.
-7. Configure dbt from `dbt/profiles.yml.example` using secure credentials.
-8. Run `dbt debug`, `dbt run`, and `dbt test`.
-9. Point the BI layer at the Synapse business views.
+3. Import the ADF datasets and pipeline under `adf/`.
+4. Parameterize the pipeline with `dataset_id`, `source_url` and `bronze_path`.
+5. Import/run the Databricks Bronze → Silver → Gold jobs.
+6. Publish Gold data to the Synapse serving layer.
+7. Configure dbt against the warehouse and run `dbt debug`, `dbt run`, `dbt test`.
+8. Point the dashboard/BI layer at the Synapse business views.
 
-## Data quality
+## 11. Data quality and reliability
 
-- Explicit PySpark schema enforcement
-- Engine/cycle duplicate detection
-- Required-field and cycle validation
-- Health score contract `[0, 100]`
-- dbt uniqueness, relationship and accepted-value tests
-- Custom dbt health-score assertion
-- GitHub Actions CI
-- Raw-zone replay boundary
+- explicit source schema
+- engine/cycle duplicate checks
+- cycle-range validation
+- null and required-field checks
+- health score contract `[0,100]`
+- dbt uniqueness and relationship tests
+- accepted-value tests for risk bands
+- CI on every push and pull request
+- raw-zone replay boundary
+- source-data download excluded from Git history
 
-## Production hardening
+## 12. Production hardening
 
-Natural next steps include Managed Identity + Key Vault, Purview/Unity Catalog governance, incremental Delta processing, metadata-driven ADF ingestion, structured streaming, Azure Monitor, data contracts, environment promotion, model registry, and Databricks/Synapse cost monitoring.
+A production implementation could add Managed Identity + Key Vault, Microsoft Purview governance, Unity Catalog, metadata-driven ADF ingestion, incremental Delta processing, Azure Monitor/Log Analytics, environment promotion, data contracts, model registry and platform cost monitoring.
 
-## Documentation
+## 13. Documentation
 
-- [`docs/runbook.md`](docs/runbook.md)
-- [`docs/architecture.md`](docs/architecture.md)
-- [`docs/portfolio_walkthrough.md`](docs/portfolio_walkthrough.md)
-- [`dbt/README.md`](dbt/README.md)
-- [`data/raw/README.md`](data/raw/README.md)
+- [`docs/architecture.md`](docs/architecture.md) — design and data contracts
+- [`docs/runbook.md`](docs/runbook.md) — setup and operations
+- [`docs/portfolio_walkthrough.md`](docs/portfolio_walkthrough.md) — interview-ready explanation
+- [`dbt/README.md`](dbt/README.md) — transformation layer
+- [`data/raw/README.md`](data/raw/README.md) — source-data policy
 
-## Author
+## 14. Author
 
-**Manish Reddy Kallu** — Data Engineering Portfolio
+**Manish Reddy Kallu** · Data Engineering Portfolio
 
-GitHub: https://github.com/manishkallu01-wq
+[GitHub](https://github.com/manishkallu01-wq) · [LinkedIn](https://www.linkedin.com/in/manish-reddy-kallu/)
 
-LinkedIn: https://www.linkedin.com/in/manish-reddy-kallu/
+---
 
-## Disclaimer
-
-Independent portfolio implementation using public/simulated aerospace data. It does not represent NASA, an airline, an aircraft manufacturer, or a certified aviation maintenance workflow. Cost calculations are scenario assumptions only.
+**Independent portfolio project. Public/simulated data only. No real aircraft, airline, OEM, safety or maintenance decisions are represented.**
