@@ -1,0 +1,4 @@
+# Optional local engineering environment for the transformation layer
+pyspark>=3.5,<4
+# dbt adapter for Synapse / SQL Server
+ dbt-sqlserver>=1.9,<2
