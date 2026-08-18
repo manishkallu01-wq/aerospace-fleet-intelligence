@@ -1,88 +1,79 @@
 # 📈 Portfolio Results & Analytics
 
-> **Evidence layer:** this page separates reproducible source-data findings from illustrative dashboard preview values.
+> **Evidence layer:** this page separates reproducible FD001 benchmark findings from the target Azure architecture.
 
 ## ✈️ Dataset profile
 
-The NASA C-MAPSS FD001 benchmark is a simulated turbofan-engine degradation dataset. It contains multivariate sensor measurements across operating cycles and is designed around degradation/run-to-failure analysis.
+NASA C-MAPSS FD001 is a simulated turbofan-engine degradation benchmark. It contains 100 training trajectories and 100 test trajectories under one operating condition and one fault mode. Each cycle contains three operating settings and 21 sensor measurements.
 
-The project deliberately does **not** claim that these observations represent a real airline fleet or certified maintenance system.
+The test trajectories are truncated before failure and the separate RUL vector is supplied for benchmark evaluation.
+
+## 🔢 Executed benchmark metrics
+
+| Metric | Result |
+|---|---:|
+| Test engines | **100** |
+| Test records | **13,096** |
+| Training records | **20,631** |
+| Mean true RUL | **75.52 cycles** |
+| Median true RUL | **86 cycles** |
+| Minimum true RUL | **7 cycles** |
+| Maximum true RUL | **145 cycles** |
+| Critical ≤30 | **25 engines** |
+| High 31–60 | **14 engines** |
+| Maintenance queue ≤60 | **39 engines** |
+| Watch 61–90 | **15 engines** |
+| Healthy >90 | **46 engines** |
 
 ## 🎯 Business questions
 
 ### 1. Which engines should receive attention first?
 
-**Answer:** the Gold layer ranks the latest engine state using an explainable combination of remaining useful life, degradation behavior, sensor instability and cycle-age risk.
+**Benchmark answer:** start with the lower-RUL tail. The ten lowest-RUL engines in the committed evidence range from **7 to 15 cycles**.
 
-**Business value:** maintenance planners receive a prioritized queue rather than a raw telemetry dump.
+**Production answer:** replace true RUL with an independently evaluated model prediction available at decision time.
 
 ### 2. How much useful life remains?
 
-**Answer:** RUL is expressed in operating cycles and becomes the common planning measure across engines.
+The benchmark evaluation spans **7–145 cycles**, with a median of **86 cycles**. That spread is why fleet averages should be paired with distribution and tail metrics.
 
-**Business value:** planners can group engines into intervention, monitoring and routine-review windows.
+### 3. Where is risk concentrated?
 
-### 3. Where is fleet risk concentrated?
-
-**Answer:** the dashboard groups the latest engine snapshots into CRITICAL, HIGH, WATCH and HEALTHY bands.
-
-**Business value:** management can see whether limited maintenance capacity is being consumed by a small high-risk subset or spread broadly across the fleet.
+Using the portfolio's transparent evaluation thresholds, **25%** of test engines are critical and **39%** fall into the ≤60-cycle maintenance queue.
 
 ### 4. What happens when maintenance capacity is constrained?
 
-**Answer:** the maintenance opportunity mart is designed to rank candidates against an intervention threshold and available capacity.
-
-**Business value:** the same analytical output can support different planning scenarios without changing the underlying telemetry pipeline.
+The queue-shaped dbt/Synapse contract provides the structure for sorting candidates by urgency. Capacity itself should remain an explicit planning parameter rather than an invented operational fact.
 
 ### 5. What should an analyst avoid claiming?
 
-The health score is a **portfolio decision heuristic**, not an aviation-certified prediction model. Financial outputs are scenario estimates based on user-provided assumptions. This distinction keeps the project technically credible.
+The benchmark's true RUL labels are **evaluation ground truth**. They are not available to an operator before failure. The portfolio therefore does not present the benchmark labels as a live predictive-maintenance system.
 
-## 🧮 Analytical model
+## 🧱 Engineering evidence
 
-```text
-Health Score =
-    0.40 × RUL Risk
-  + 0.25 × Degradation Trend
-  + 0.20 × Sensor Instability
-  + 0.15 × Cycle Age Risk
-```
+The repository contains:
 
-The score is transformed into an operational risk band and then into a recommended action.
+- ADF parameterized ingestion metadata
+- ADLS Bronze/Silver/Gold architecture
+- PySpark transformations
+- dbt project + source/model contracts
+- Synapse business views
+- Streamlit dashboard
+- executable analysis notebook
+- machine-readable CSV results
+- rendered SVG evidence
+- Python tests + GitHub Actions CI
 
-| Risk band | Planner action |
-|---|---|
-| 🔴 CRITICAL | Immediate review |
-| 🟠 HIGH | Schedule intervention |
-| 🟡 WATCH | Increase monitoring |
-| 🟢 HEALTHY | Routine monitoring |
+The Azure components are **deployment-ready portfolio artifacts**, not claims of a currently running Azure subscription/workspace.
 
-## 📊 Dashboard story
+## 🖼️ Evidence
 
-The dashboard is intentionally organized in this order:
-
-**Fleet snapshot → risk concentration → RUL/health relationship → maintenance queue → business questions**
-
-That sequence lets a reviewer move from **"What is happening?"** to **"Where is the problem?"** to **"What should we do?"**.
-
-## 🔬 Reproducibility standard
-
-For a portfolio-quality deployment, displayed KPI values should always be generated from:
-
-`NASA source → ADF → ADLS → PySpark → Gold → dbt → Synapse → dashboard`
-
-Illustrative preview records are explicitly labeled in the application and must not be presented as measured NASA benchmark statistics.
+![Executed FD001 results](../reports/fd001_execution_results.svg)
 
 ## 💼 Portfolio outcome
 
-The important result is not a fabricated savings percentage. The outcome is a complete analytical data product that demonstrates:
+The strongest result is a traceable chain:
 
-- cloud ingestion and orchestration
-- lakehouse storage design
-- distributed PySpark processing
-- governed SQL transformation with dbt
-- warehouse serving through Synapse
-- business-oriented KPI design
-- maintenance prioritization
-- data-quality controls
-- decision-focused dashboard storytelling
+`public source → schema contract → transformation code → tests → result artifact → dashboard → cloud deployment design`
+
+That is materially more defensible than presenting an attractive dashboard with invented KPIs.
