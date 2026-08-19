@@ -1,29 +1,29 @@
-# 🔬 FD001 Executed Analysis
+# 🔬 FD001 Analysis
 
-> Reproducible evaluation notebook specification. The committed `reports/` artifacts are the rendered evidence from this analysis.
-
-## Objective
-
-Quantify the FD001 test-fleet RUL distribution and convert it into a transparent maintenance-prioritization view.
+This analysis uses the NASA C-MAPSS FD001 test RUL file to summarize the test fleet and build a simple maintenance-priority view.
 
 ## Source
 
-NASA C-MAPSS FD001 test RUL labels. The benchmark contains 100 test engines. The labels are **evaluation ground truth** and are not prospective operator information.
+`data/raw/RUL_FD001.txt`
 
-## Metrics
+The file contains the true RUL value for each of the 100 FD001 test engines. These values are benchmark labels used to check an RUL model; they are not live sensor predictions.
 
-- Engines: **100**
-- Mean RUL: **75.52 cycles**
-- Median RUL: **86 cycles**
-- Minimum RUL: **7 cycles**
-- Maximum RUL: **145 cycles**
-- Critical (≤30): **25 engines / 25%**
-- High (31–60): **14 engines / 14%**
-- Maintenance queue (≤60): **39 engines / 39%**
-- Watch (61–90): **15 engines / 15%**
-- Healthy (>90): **46 engines / 46%**
+## Results
 
-## Reproduction contract
+| Metric | Result |
+|---|---:|
+| Engines | **100** |
+| Mean RUL | **75.52 cycles** |
+| Median RUL | **86 cycles** |
+| Minimum RUL | **7 cycles** |
+| Maximum RUL | **145 cycles** |
+| Critical (≤30) | **25 / 100** |
+| High (31–60) | **14 / 100** |
+| Queue (≤60) | **39 / 100** |
+| Watch (61–90) | **15 / 100** |
+| Healthy (>90) | **46 / 100** |
+
+## Run the analysis
 
 ```python
 from src.aerospace_analytics import load_fd001_rul, build_evaluation_table, summarize
@@ -34,12 +34,12 @@ metrics = summarize(result)
 print(metrics)
 ```
 
-## Interpretation
+The resulting table can be written to `reports/fd001_engine_rul.csv` and used by the dashboard.
 
-The mean alone hides a significant low-RUL tail. The operational planning threshold of ≤60 cycles identifies **39%** of engines for the maintenance queue, while **25%** are in the critical ≤30-cycle band.
+## What the result means
 
-The ten lowest-RUL engines are retained in `reports/fd001_engine_rul.csv` and rendered in `reports/fd001_execution_results.svg`.
+The average RUL is 75.52 cycles, but the test set spans 7 to 145 cycles. Using 60 cycles as the project planning cutoff puts 39 engines in the maintenance queue. Twenty-five of those are at or below 30 cycles.
 
-## Credibility boundary
+The lowest-RUL engine is E034 at 7 cycles. The next lowest values are 8, 8, 8, 9, 10, 10, 11, 14, and 15 cycles.
 
-This analysis does **not** claim that the benchmark is a live airline fleet, that true RUL is known before failure, or that the heuristic is aviation-certified. It demonstrates how an engineering platform can preserve benchmark truth for evaluation while separating it from prospective operational predictions.
+The important point is that the average alone is not enough to prioritize individual engines. The engine-level table is what makes the result useful for review.
