@@ -1,10 +1,8 @@
-# 🎨 Project Visuals
+# 🎨 Project visuals
 
-This directory contains **hand-authored SVG diagrams and rendered analytical evidence** created for this portfolio project.
+This folder contains the visuals used by the project:
 
-- `architecture.svg` — data-platform architecture diagram.
-- `../reports/fd001_execution_results.svg` — rendered output from the FD001 evaluation artifact.
+- `architecture.svg` — the ADF → ADLS → Databricks → dbt → Synapse flow.
+- `../reports/fd001_execution_results.svg` — charts and tables generated from the FD001 result data.
 
-The project does **not** use AI-generated aircraft photographs, stock imagery, fabricated screenshots, or proprietary aerospace UI assets. Visuals are either engineering diagrams or data-derived/reporting visuals.
-
-Any future UI concept that uses illustrative values must be explicitly labeled **DESIGN CONCEPT — NOT SOURCE DATA** and must never be presented as an executed analytical result.
+The visuals are part of the project documentation and reporting. The analytical graphic is based on the committed result CSV rather than placeholder numbers.
