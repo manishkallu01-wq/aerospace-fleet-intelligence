@@ -41,7 +41,7 @@ The committed 100-row RUL input is the compact FD001 label vector required to re
 
 The 39 engines at or below 60 cycles form the project’s review queue. The average alone hides this low-RUL tail, so the dashboard keeps both fleet-level statistics and engine-level priorities visible. These are benchmark labels and project-defined bands, not model predictions or aviation policy.
 
-![Execution results](reports/fd001_execution_results.svg)
+![Execution results](assets/fd001-execution-results.svg)
 
 ## Reproduce the report
 
