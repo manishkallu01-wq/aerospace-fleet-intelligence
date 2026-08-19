@@ -1,4 +1,4 @@
-# FD001 Data Dictionary
+# 📚 FD001 Data Dictionary
 
 NASA C-MAPSS FD001 rows contain **26 numeric columns**: engine identifier, cycle, three operating settings, and 21 sensor measurements.
 
