@@ -302,11 +302,11 @@ https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 ## Author
 
 **Manish Reddy Kallu**
-Data Engineering Portfolio
+Data engineering work
 
 GitHub: https://github.com/manishkallu01-wq
 
-> Independent portfolio project using public/simulated data. It is not a NASA, airline, aircraft manufacturer, or certified aviation maintenance system.
+> Independent reference project using public/simulated data. It is not a NASA, airline, aircraft manufacturer, or certified aviation maintenance system.
 
 ## Reproducibility and evidence contract
 
@@ -326,6 +326,6 @@ Run `python scripts/validate_project.py` before tests to verify required artifac
 
 - Source provenance and analytical grain are documented.
 - Every reported metric traces to a committed machine-readable artifact.
-- Thresholds are labeled as portfolio analysis rules, not aviation limits.
+- Thresholds are labeled as project analysis rules, not aviation limits.
 - Unit tests cover boundary conditions and reconciliation.
 - Cloud components make no unsupported claim of a live deployment.
