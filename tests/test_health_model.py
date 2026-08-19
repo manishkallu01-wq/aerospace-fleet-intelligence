@@ -39,7 +39,7 @@ def test_loader_requires_100_engines(tmp_path):
 
 def test_loader_rejects_blank_values(tmp_path):
     path = tmp_path / "RUL_FD001.txt"
-    path.write_text("\n".join(["10"] * 99 + [""]))
+    path.write_text("\n".join(["10"] * 50 + [""] + ["10"] * 49))
     with pytest.raises(ValueError, match="missing values"):
         load_fd001_rul(path)
 

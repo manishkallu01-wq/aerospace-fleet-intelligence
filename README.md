@@ -307,3 +307,25 @@ Data Engineering Portfolio
 GitHub: https://github.com/manishkallu01-wq
 
 > Independent portfolio project using public/simulated data. It is not a NASA, airline, aircraft manufacturer, or certified aviation maintenance system.
+
+## Reproducibility and evidence contract
+
+The repository deliberately separates what is locally demonstrated from what is cloud deployment scaffolding.
+
+| Claim | Evidence |
+|---|---|
+| FD001 result classification is reproducible | `src/aerospace_analytics.py`, result builder, committed result table, pytest suite |
+| Dashboard reads the governed result artifact | `dashboard/app.py` → `reports/fd001_engine_rul.csv` |
+| Azure medallion design is implementation-ready scaffolding | ADF JSON, PySpark jobs, dbt models, Synapse SQL |
+| A live Azure deployment exists | **Not claimed**; subscription, credentials, and runtime evidence are intentionally absent |
+| Values are model predictions | **Not claimed**; the dashboard uses benchmark true-RUL labels |
+
+Run `python scripts/validate_project.py` before tests to verify required artifacts, Python syntax, JSON configuration syntax, and critical documentation links. Then run `pytest -q`. A cloud release additionally requires environment-specific integration tests, row-count reconciliation, freshness checks, dbt tests, and deployment evidence.
+
+## Definition of done
+
+- Source provenance and analytical grain are documented.
+- Every reported metric traces to a committed machine-readable artifact.
+- Thresholds are labeled as portfolio analysis rules, not aviation limits.
+- Unit tests cover boundary conditions and reconciliation.
+- Cloud components make no unsupported claim of a live deployment.
