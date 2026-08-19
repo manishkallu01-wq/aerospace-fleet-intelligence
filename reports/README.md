@@ -1,8 +1,10 @@
-# FD001 Results
+# ✈️ FD001 Results
 
 This folder contains the result files produced from the NASA C-MAPSS FD001 analysis.
 
-## Results
+![FD001 execution results](fd001_execution_results.svg)
+
+## 📊 Results
 
 | Metric | Result |
 |---|---:|
@@ -20,7 +22,7 @@ This folder contains the result files produced from the NASA C-MAPSS FD001 analy
 | Watch (61–90) | **15 engines** |
 | Healthy (>90) | **46 engines** |
 
-## Main finding
+## 🚦 Main finding
 
 Thirty-nine of the 100 test engines are at or below 60 cycles of true RUL. Twenty-five are at or below 30 cycles.
 
@@ -28,12 +30,12 @@ The ten lowest-RUL engines are:
 
 `E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), E056 (15)`
 
-## Files
+## 📁 Files
 
 - `fd001_engine_rul.csv` - one result row for each test engine
 - `fd001_execution_results.svg` - chart generated from the result file
 
-## Reproducing the analysis
+## 🔬 Reproducing the analysis
 
 The result file is the input used by the Streamlit dashboard. The surrounding repository contains the PySpark, Python, dbt, Synapse, and ADF files used to build the wider project.
 
