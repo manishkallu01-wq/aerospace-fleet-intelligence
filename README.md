@@ -116,7 +116,7 @@ Dashboard / BI
 | `docs/` | Architecture, data dictionary, findings, and runbook |
 | `notebooks/` | FD001 analysis notebook |
 | `reports/` | Executed result CSV and SVG |
-| `scripts/` | Source-data download helper |
+| `scripts/` | Source-data download and result-build helpers |
 | `src/` | Reusable Python analytics |
 | `synapse/` | Warehouse tables and views |
 | `tests/` | Automated tests |
@@ -144,7 +144,44 @@ Windows PowerShell:
 .venv\Scripts\Activate.ps1
 ```
 
-### 3. Run the tests
+### 3. Get the NASA FD001 files
+
+Download the public **NASA C-MAPSS Jet Engine Simulated Data** from the source listed at the bottom of this README. Extract the archive locally and place the FD001 files under:
+
+```text
+data/raw/
+```
+
+The result build needs:
+
+```text
+data/raw/RUL_FD001.txt
+```
+
+The full source archive is intentionally not committed to Git.
+
+### 4. Build the engine-level results
+
+```bash
+python scripts/build_fd001_results.py
+```
+
+This reads `RUL_FD001.txt`, applies the project RUL bands, and writes:
+
+```text
+reports/fd001_engine_rul.csv
+```
+
+The output has one row per test engine:
+
+```text
+engine_id
+true_rul_cycles
+risk_band
+priority
+```
+
+### 5. Run the tests
 
 ```bash
 pytest -q
@@ -152,55 +189,26 @@ pytest -q
 
 The tests check the RUL band boundaries and that the summary counts reconcile with the engine-level result file.
 
-### 4. Start the dashboard
+### 6. Start the dashboard
 
 ```bash
 streamlit run dashboard/app.py
 ```
 
-The dashboard reads the committed file:
+The dashboard reads the result file generated in Step 4.
 
-```text
-reports/fd001_engine_rul.csv
-```
+### 7. Run the notebook
 
-### 5. Re-run the analysis with the NASA source file
-
-The full C-MAPSS archive is not committed to Git. Download the public NASA dataset and place the FD001 files under `data/raw/`.
-
-For the analysis notebook, the required test-label file is:
-
-```text
-data/raw/RUL_FD001.txt
-```
-
-Then run the analysis code in:
+Open:
 
 ```text
 notebooks/01_fd001_executed_analysis.ipynb
 ```
 
-The same logic is available as reusable functions in:
+The same reusable functions are available in:
 
 ```text
 src/aerospace_analytics.py
-```
-
-### 6. Check the generated result
-
-The expected engine-level output is:
-
-```text
-reports/fd001_engine_rul.csv
-```
-
-It contains one row per test engine with:
-
-```text
-engine_id
-true_rul_cycles
-risk_band
-priority
 ```
 
 ## 🔬 How the numbers are interpreted
