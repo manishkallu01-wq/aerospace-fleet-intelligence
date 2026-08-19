@@ -1,4 +1,4 @@
-# 🔬 FD001 Analysis
+# FD001 Analysis
 
 This analysis uses the NASA C-MAPSS FD001 test RUL file to summarize the test fleet and build a simple maintenance-priority view.
 
