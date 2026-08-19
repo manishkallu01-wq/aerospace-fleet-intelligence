@@ -10,12 +10,19 @@ RISK_BANDS = ["CRITICAL", "HIGH", "WATCH", "HEALTHY"]
 
 def load_fd001_rul(path: str | Path) -> pd.DataFrame:
     """Load and validate the FD001 test RUL vector."""
-    values = pd.read_csv(path, header=None, names=["true_rul_cycles"])
+    values = pd.read_csv(
+        path,
+        header=None,
+        names=["true_rul_cycles"],
+        skip_blank_lines=False,
+    )
 
     if values.empty:
         raise ValueError("FD001 RUL file is empty")
     if values["true_rul_cycles"].isna().any():
         raise ValueError("FD001 RUL file contains missing values")
+    if not pd.api.types.is_numeric_dtype(values["true_rul_cycles"]):
+        raise ValueError("FD001 RUL values must be numeric")
     if (values["true_rul_cycles"] < 0).any():
         raise ValueError("FD001 RUL values cannot be negative")
     if len(values) != 100:
@@ -42,6 +49,11 @@ def build_evaluation_table(rul: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"Missing required columns: {sorted(missing)}")
 
     result = rul.copy()
+    if result["true_rul_cycles"].isna().any():
+        raise ValueError("true_rul_cycles contains missing values")
+    if (result["true_rul_cycles"] < 0).any():
+        raise ValueError("true_rul_cycles cannot be negative")
+
     result["risk_band"] = classify_rul(result["true_rul_cycles"])
     priority = {"CRITICAL": 1, "HIGH": 2, "WATCH": 3, "HEALTHY": 4}
     result["priority"] = result["risk_band"].map(priority).astype(int)
@@ -50,6 +62,11 @@ def build_evaluation_table(rul: pd.DataFrame) -> pd.DataFrame:
 
 def summarize(result: pd.DataFrame) -> dict[str, float | int]:
     """Return deterministic fleet-level metrics."""
+    required = {"engine_id", "true_rul_cycles"}
+    missing = required.difference(result.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {sorted(missing)}")
+
     rul = result["true_rul_cycles"]
     return {
         "engines": int(result["engine_id"].nunique()),
