@@ -214,7 +214,7 @@ engine_id,true_rul_cycles,risk_band,priority
 pytest -q
 ```
 
-The tests cover the RUL thresholds, summary reconciliation, input size, and missing-value handling.
+The tests cover the RUL thresholds, summary reconciliation, input size, missing values, negative values, and required columns.
 
 ### 6. Run the dashboard
 
@@ -229,7 +229,7 @@ The dashboard reads the CSV generated in Step 4, so no database connection is re
 Open:
 
 ```text
-notebooks/01_fd001_executed_analysis.ipynb
+notebooks/01_fd001_analysis.ipynb
 ```
 
 The reusable functions are in:
