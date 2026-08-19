@@ -1,6 +1,6 @@
-# Architecture
+# 🏗️ Architecture
 
-## Data flow
+## 🔄 Data flow
 
 ```text
 NASA C-MAPSS
@@ -30,13 +30,13 @@ Databricks / PySpark
 
 The project keeps ingestion, storage, transformation, modeling, and reporting in separate layers. That makes it easier to test each part and replace one component without rewriting the rest of the flow.
 
-## Data grain
+## 📐 Data grain
 
 The Silver telemetry data is stored at **engine x operating cycle** grain.
 
 The main Gold record represents the latest available state for each engine.
 
-## What is implemented
+## 🧩 What is implemented
 
 The repository contains:
 
@@ -49,6 +49,6 @@ The repository contains:
 
 The Azure files are intended to be configured and run in an Azure environment. The repository does not claim that those cloud resources are currently running.
 
-## Moving toward production
+## 🚀 Moving toward production
 
 A production deployment would add managed identities, Key Vault, incremental loads, monitoring, data governance, environment-specific configuration, and CI/CD deployment into Azure.
