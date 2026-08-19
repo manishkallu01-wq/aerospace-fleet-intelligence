@@ -1,8 +1,16 @@
 # ✈️ FD001 Results
 
-This folder contains the result files produced from the NASA C-MAPSS FD001 analysis.
+This folder contains the main analytical output from the NASA C-MAPSS FD001 analysis.
 
 ![FD001 execution results](fd001_execution_results.svg)
+
+## 📌 Key takeaways
+
+- **100** test engines are included.
+- **39 engines (39%)** are at or below 60 cycles of true RUL.
+- **25 engines (25%)** are at or below 30 cycles.
+- The fleet mean is **75.52 cycles**, while the range is **7–145 cycles**.
+- The lowest-RUL engine is **E034 at 7 cycles**.
 
 ## 📊 Results
 
@@ -22,21 +30,40 @@ This folder contains the result files produced from the NASA C-MAPSS FD001 analy
 | Watch (61–90) | **15 engines** |
 | Healthy (>90) | **46 engines** |
 
-## 🚦 Main finding
-
-Thirty-nine of the 100 test engines are at or below 60 cycles of true RUL. Twenty-five are at or below 30 cycles.
+## 🔧 Priority list
 
 The ten lowest-RUL engines are:
 
-`E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), E056 (15)`
+| Engine | True RUL | Band |
+|---|---:|---|
+| E034 | 7 | 🔴 Critical |
+| E031 | 8 | 🔴 Critical |
+| E081 | 8 | 🔴 Critical |
+| E068 | 8 | 🔴 Critical |
+| E082 | 9 | 🔴 Critical |
+| E076 | 10 | 🔴 Critical |
+| E042 | 10 | 🔴 Critical |
+| E035 | 11 | 🔴 Critical |
+| E066 | 14 | 🔴 Critical |
+| E056 | 15 | 🔴 Critical |
 
 ## 📁 Files
 
-- `fd001_engine_rul.csv` - one result row for each test engine
-- `fd001_execution_results.svg` - chart generated from the result file
+- `fd001_engine_rul.csv` — one result row for each test engine
+- `fd001_execution_results.svg` — visual summary built from the result CSV
 
-## 🔬 Reproducing the analysis
+## ▶️ Reproduce
 
-The result file is the input used by the Streamlit dashboard. The surrounding repository contains the PySpark, Python, dbt, Synapse, and ADF files used to build the wider project.
+From the repository root, after placing `RUL_FD001.txt` under `data/raw/`:
 
-The RUL values in this report are the true test labels supplied with FD001. They are used here to check and explain the benchmark results; they are not model predictions.
+```bash
+python scripts/build_fd001_results.py
+pytest -q
+streamlit run dashboard/app.py
+```
+
+The build script reads the NASA test RUL vector, applies the project's four RUL bands, and writes the CSV consumed by the dashboard.
+
+## ⚠️ Note on the RUL values
+
+The RUL values in this folder are the true test labels supplied with FD001. They are used to evaluate and explain the benchmark. They are not model predictions.
