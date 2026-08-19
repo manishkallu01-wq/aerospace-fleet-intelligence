@@ -1,8 +1,8 @@
-# 📊 Executed Analytics & Evidence
+# FD001 Results
 
-This folder contains **outputs generated from the project analysis**, not just source code.
+This folder contains the result files produced from the NASA C-MAPSS FD001 analysis.
 
-## NASA C-MAPSS FD001 results
+## Results
 
 | Metric | Result |
 |---|---:|
@@ -10,45 +10,31 @@ This folder contains **outputs generated from the project analysis**, not just s
 | Test records | **13,096** |
 | Training records | **20,631** |
 | Sensor channels | **21** |
-| Mean true RUL | **75.52 cycles** |
-| Median true RUL | **86 cycles** |
-| Minimum true RUL | **7 cycles** |
-| Maximum true RUL | **145 cycles** |
-| Critical engines (≤30) | **25 (25%)** |
-| High engines (31–60) | **14 (14%)** |
-| Maintenance queue (≤60) | **39 (39%)** |
-| Watch engines (61–90) | **15 (15%)** |
-| Healthy engines (>90) | **46 (46%)** |
+| Mean RUL | **75.52 cycles** |
+| Median RUL | **86 cycles** |
+| Minimum RUL | **7 cycles** |
+| Maximum RUL | **145 cycles** |
+| Critical (≤30) | **25 engines** |
+| High (31–60) | **14 engines** |
+| Maintenance queue (≤60) | **39 engines** |
+| Watch (61–90) | **15 engines** |
+| Healthy (>90) | **46 engines** |
 
-## 🔎 What the execution tells us
+## Main finding
 
-### 1. 39% of the test fleet belongs in a maintenance planning queue
-Using the project threshold of **RUL ≤ 60 cycles**, 39 of 100 engines qualify. That is a materially different operational signal from simply reporting average fleet health.
+Thirty-nine of the 100 test engines are at or below 60 cycles of true RUL. Twenty-five are at or below 30 cycles.
 
-### 2. One quarter of the fleet is in the critical band
-**25 engines (25%) have ≤30 cycles of true RUL.** The lowest observed RUL is only **7 cycles**, so a maintenance planner would need to prioritize the lower tail rather than rely on the mean of 75.52 cycles.
+The ten lowest-RUL engines are:
 
-### 3. The distribution is highly heterogeneous
-The median RUL is **86 cycles**, while the minimum is **7** and maximum is **145**. The fleet therefore contains a substantial long-life population alongside a concentrated low-RUL tail.
+`E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), E056 (15)`
 
-### 4. The first priority candidates are concrete
-The ten lowest-RUL engines are E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), and E056 (15).
+## Files
 
-### 5. This is a decision-support result, not a certified prediction
-These are **ground-truth RUL labels from the benchmark test set** used for evaluation and portfolio analysis. The production dashboard should use model predictions or Gold-layer estimates when deployed prospectively. It should not expose future true RUL as if it were available to an operator before failure.
+- `fd001_engine_rul.csv` - one result row for each test engine
+- `fd001_execution_results.svg` - chart generated from the result file
 
-## 🖼️ Evidence screenshot
+## Reproducing the analysis
 
-![FD001 execution results](fd001_execution_results.svg)
+The result file is the input used by the Streamlit dashboard. The surrounding repository contains the PySpark, Python, dbt, Synapse, and ADF files used to build the wider project.
 
-## 📁 Machine-readable output
-
-`fd001_engine_rul.csv` contains the 100-engine result table with RUL, risk band and priority.
-
-## 🔬 Reproduction
-
-The analytical pipeline is designed as:
-
-`NASA C-MAPSS → ADF → ADLS → PySpark → Gold → dbt → Synapse → dashboard`
-
-The benchmark result shown here is a **ground-truth evaluation artifact**. It is intentionally kept separate from prospective production predictions so the portfolio does not leak future labels into the operational dashboard.
+The RUL values in this report are the true test labels supplied with FD001. They are used here to check and explain the benchmark results; they are not model predictions.
