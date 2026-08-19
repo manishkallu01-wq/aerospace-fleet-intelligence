@@ -1,63 +1,36 @@
 # ✈️ Aerospace Fleet Intelligence
 
-A data engineering project built around NASA's C-MAPSS FD001 turbofan dataset. The project takes engine-cycle data through an Azure-oriented data platform and turns it into RUL analysis, maintenance priorities, and a small Streamlit dashboard.
+A data engineering project built around NASA's C-MAPSS FD001 turbofan dataset. It takes engine-cycle data through an Azure-style data platform and turns it into RUL analysis, maintenance priorities, and a small Streamlit dashboard.
 
 **Stack:** Azure Data Factory · ADLS Gen2 · Databricks/PySpark · dbt · Azure Synapse · Python · Streamlit · Plotly · GitHub Actions
 
 ![FD001 analysis results](reports/fd001_execution_results.svg)
 
-## 🔎 Project overview
+## 🔎 What this project does
 
-The main idea is straightforward: start with engine telemetry, clean and organize it, build an analytical layer, and make the results useful to someone looking at fleet health.
+The project follows a simple path:
 
-The repository has two parts:
+**ingest → store → clean → transform → model → report**
 
-1. **Working local analysis** using the NASA FD001 data and the supplied test RUL values.
-2. **Azure implementation files** showing how the same flow would be deployed with ADF, ADLS, Databricks, dbt, and Synapse.
+The repository contains the code and configuration for each part of that flow. The FD001 analysis and dashboard can be run locally from the repository. The Azure folders contain the corresponding cloud implementation files.
 
-The local analysis and dashboard are runnable from the files committed to this repository. The Azure pieces are deployment/configuration files; they are not presented as a live Azure environment.
+## 📌 Key takeaways
 
-## 📁 What is in the repository
+- **39 of 100 test engines** are at or below **60 cycles** of true RUL under the project's planning threshold.
+- **25 engines** are at or below **30 cycles**.
+- Fleet mean RUL is **75.52 cycles**, but the range is **7–145 cycles**. The low-RUL tail is therefore more useful for prioritization than the average by itself.
+- The ten lowest-RUL engines are **E034, E031, E081, E068, E082, E076, E042, E035, E066, and E056**.
+- The result file is used directly by the dashboard, so the numbers shown in the dashboard can be traced back to a committed CSV.
+- The current analysis uses NASA's supplied test RUL labels for benchmark analysis. A real predictive system would replace those labels with model predictions made from data available at decision time.
 
-| Area | What it does |
-|---|---|
-| `adf/` | ADF dataset and pipeline definitions |
-| `databricks/` | PySpark Bronze-to-Silver and Silver-to-Gold transformations |
-| `dbt/` | Staging models, marts, contracts, and Synapse profile template |
-| `synapse/` | Warehouse tables and business views |
-| `src/` | Reusable Python analysis functions |
-| `dashboard/` | Streamlit dashboard |
-| `reports/` | CSV results and generated analysis graphic |
-| `tests/` | Python tests |
-| `docs/` | Architecture, data definitions, run instructions, and findings |
-| `notebooks/` | Analysis notebook and specification |
-| `scripts/` | NASA source-data download helper |
-
-## 🛰️ Data
-
-The project uses **NASA C-MAPSS FD001**, a simulated turbofan-engine degradation dataset.
-
-FD001 contains:
-
-- 100 training engine trajectories
-- 100 test engine trajectories
-- 3 operating settings
-- 21 sensor measurements
-- 20,631 training records
-- 13,096 test records
-
-The training trajectories run to simulated failure. The test trajectories stop before failure, and NASA provides a separate true-RUL vector for evaluating predictions.
-
-## 📊 Results from the FD001 analysis
-
-The committed result file contains one row for each of the 100 test engines.
+## 📊 Results
 
 | Metric | Result |
 |---|---:|
 | Test engines | **100** |
 | Test records | **13,096** |
 | Training records | **20,631** |
-| Sensor channels | **21** |
+| Sensor measurements | **21** |
 | Mean RUL | **75.52 cycles** |
 | Median RUL | **86 cycles** |
 | Minimum RUL | **7 cycles** |
@@ -68,187 +41,235 @@ The committed result file contains one row for each of the 100 test engines.
 | Watch (61–90) | **15 engines** |
 | Healthy (>90) | **46 engines** |
 
-The ten lowest-RUL engines in the test set are:
+### 🚦 RUL bands used in this project
 
-`E034 (7), E031 (8), E081 (8), E068 (8), E082 (9), E076 (10), E042 (10), E035 (11), E066 (14), E056 (15)`
-
-These numbers come from `reports/fd001_engine_rul.csv` and are used to drive the dashboard.
-
-## 🚦 Risk bands
-
-The project uses simple RUL ranges to make the benchmark results easier to read:
-
-| RUL | Band | Suggested planning action |
+| RUL | Band | Planning use |
 |---:|---|---|
 | ≤30 | 🔴 Critical | Review first |
 | 31–60 | 🟠 High | Plan intervention |
 | 61–90 | 🟡 Watch | Monitor more closely |
 | >90 | 🟢 Healthy | Normal monitoring |
 
-These ranges are project thresholds for the benchmark analysis. They are **not aircraft maintenance limits**.
+These are project analysis thresholds. They are **not aircraft maintenance limits**.
 
 ## 🏗️ Architecture
 
+![Data platform architecture](assets/architecture.svg)
+
 ```text
 NASA C-MAPSS
-      |
-      v
+      ↓
 Azure Data Factory
-      |
-      v
-ADLS Gen2 - Bronze
-      |
-      v
-Databricks / PySpark
-      |
-      +---- Silver: typed engine-cycle data
-      |
-      +---- Gold: latest engine state
-                    |
-                    v
-                   dbt
-                    |
-                    v
-              Azure Synapse
-                    |
-                    v
-              Dashboard / BI
+      ↓
+ADLS Gen2 / Bronze
+      ↓
+Databricks + PySpark
+      ↓
+Silver → Gold
+      ↓
+dbt
+      ↓
+Azure Synapse
+      ↓
+Dashboard / BI
 ```
 
-### ⚙️ ADF
+### ⚙️ ADF + ADLS
 
-`adf/` contains parameterized dataset and pipeline metadata for the ingestion step. The files are ready to be imported/configured in an Azure environment, but no live ADF run is claimed in this repository.
-
-### 🗄️ ADLS
-
-The intended lake layout is:
-
-```text
-bronze/   source-preserving files
-silver/   typed and cleaned telemetry
-gold/     analytical engine records
-```
-
-The raw NASA files are not stored in Git. See `data/raw/README.md` for the download instructions.
+`adf/` contains the datasets, linked-service templates, and ingestion pipeline. The intended landing zone is ADLS Bronze, followed by Silver and Gold processing.
 
 ### ⚡ Databricks / PySpark
 
-`databricks/01_bronze_to_silver.py` handles the source schema, engine/cycle typing, duplicate removal, and sensor-level feature calculations.
+`databricks/01_bronze_to_silver.py` handles schema, typing, duplicate removal, and sensor feature calculations.
 
-`databricks/02_silver_to_gold.py` builds the latest engine snapshot and a simple condition-age proxy. The proxy is a baseline feature for the project; it is not presented as a trained RUL model.
+`databricks/02_silver_to_gold.py` creates the latest engine state and a simple condition-age baseline.
 
 ### 🧱 dbt
 
-The `dbt/` directory contains staging SQL, analytical marts, source/model contracts, and a profile template for Synapse/SQL Server.
+`dbt/` contains staging models, reporting marts, model tests/contracts, and a Synapse profile example.
 
 ### 🏢 Synapse
 
-The `synapse/` directory contains warehouse DDL and views for fleet KPIs and the maintenance queue.
+`synapse/` contains warehouse DDL and reporting views for fleet KPIs and the maintenance queue.
 
 ### 📈 Dashboard
 
-The Streamlit app reads the committed `reports/fd001_engine_rul.csv` file. It does not require a live Synapse connection to show the benchmark results.
+`dashboard/app.py` reads `reports/fd001_engine_rul.csv` and calculates the dashboard metrics from that file. It includes:
 
-It includes:
-
-- fleet-level RUL statistics
+- fleet summary KPIs
 - RUL distribution
 - risk-band counts
-- maintenance priority queue
-- a few simple findings for the benchmark
+- maintenance priority table
+- key findings
 
-## ▶️ Run it locally
+## 📁 Repository layout
+
+| Folder | Purpose |
+|---|---|
+| `adf/` | ADF datasets, linked services, and pipeline |
+| `assets/` | Architecture and project visuals |
+| `dashboard/` | Streamlit dashboard |
+| `data/raw/` | Local source-data instructions; full dataset excluded from Git |
+| `data/reference/` | Schema/reference information |
+| `databricks/` | PySpark transformations |
+| `dbt/` | Staging and mart models |
+| `docs/` | Architecture, data dictionary, findings, and runbook |
+| `notebooks/` | FD001 analysis notebook |
+| `reports/` | Executed result CSV and SVG |
+| `scripts/` | Source-data download helper |
+| `src/` | Reusable Python analytics |
+| `synapse/` | Warehouse tables and views |
+| `tests/` | Automated tests |
+
+## ▶️ Reproduce the local analysis
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/manishkallu01-wq/aerospace-fleet-intelligence.git
+cd aerospace-fleet-intelligence
+```
+
+### 2. Create the Python environment
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-pytest -q
-streamlit run dashboard/app.py
 ```
 
-The dashboard expects `reports/fd001_engine_rul.csv` to be present.
+Windows PowerShell:
 
-## 🧪 Testing
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
-The Python tests cover the risk-band boundaries and reconciliation of the summary counts.
-
-Run:
+### 3. Run the tests
 
 ```bash
 pytest -q
 ```
 
-GitHub Actions runs the same test command on pushes and pull requests.
+The tests check the RUL band boundaries and that the summary counts reconcile with the engine-level result file.
 
-## ☁️ Current Azure status
+### 4. Start the dashboard
 
-The repository includes the Azure implementation files, but the Azure resources themselves are not part of this GitHub project.
+```bash
+streamlit run dashboard/app.py
+```
 
-| Component | Current status |
-|---|---|
-| NASA FD001 analysis | Completed locally |
-| Python analytics | Implemented and tested |
-| Streamlit dashboard | Runs from committed results |
-| PySpark transformations | Implemented |
-| ADF | Pipeline/dataset files included; live run not claimed |
-| ADLS Gen2 | Target lake design; live account not included |
-| dbt | Models and contracts included; live run not claimed |
-| Synapse | DDL/views included; live workspace not included |
-| GitHub Actions | CI workflow included |
+The dashboard reads the committed file:
 
-This keeps the repository clear about what can be reproduced directly from GitHub and what still needs an Azure subscription.
+```text
+reports/fd001_engine_rul.csv
+```
 
-## 💡 Business questions
+### 5. Re-run the analysis with the NASA source file
 
-The analysis is aimed at a few practical questions:
+The full C-MAPSS archive is not committed to Git. Download the public NASA dataset and place the FD001 files under `data/raw/`.
 
-- Which engines have the lowest remaining useful life?
-- How large is the maintenance queue under a given RUL threshold?
-- How does the lower-RUL tail compare with the fleet average?
-- How could a warehouse expose the data to planners or BI tools?
-- What would need to change before replacing benchmark labels with a real RUL model?
+For the analysis notebook, the required test-label file is:
 
-## ⚠️ Important note about RUL
+```text
+data/raw/RUL_FD001.txt
+```
 
-The true RUL values supplied with FD001 are test labels. They are useful for measuring a model, but they would not be known to an operator before an engine reaches failure.
+Then run the analysis code in:
 
-For that reason, the current dashboard is a **benchmark analysis dashboard**, not a live predictive-maintenance system. A production version would feed the same downstream layers with model predictions generated from data available at decision time.
+```text
+notebooks/01_fd001_executed_analysis.ipynb
+```
+
+The same logic is available as reusable functions in:
+
+```text
+src/aerospace_analytics.py
+```
+
+### 6. Check the generated result
+
+The expected engine-level output is:
+
+```text
+reports/fd001_engine_rul.csv
+```
+
+It contains one row per test engine with:
+
+```text
+engine_id
+true_rul_cycles
+risk_band
+priority
+```
+
+## 🔬 How the numbers are interpreted
+
+The project uses the supplied FD001 test RUL values to answer a planning question: **which engines are closest to the end of their simulated run?**
+
+A simple threshold of 60 cycles creates a planning queue of 39 engines. Splitting that queue at 30 cycles leaves 25 critical engines and 14 high-priority engines.
+
+The mean RUL of 75.52 cycles should not be treated as a fleet-health score. It is an average of the benchmark labels. The wide 7–145 cycle range is why the project shows both fleet-level statistics and an engine-level priority list.
+
+There is no dollar savings estimate in this project because FD001 does not contain actual airline maintenance costs, labor rates, downtime costs, or intervention decisions. A financial estimate without those inputs would be made up.
+
+## ☁️ Azure implementation
+
+The Azure components are included as project code/configuration and are designed around this flow:
+
+```text
+ADF → ADLS Bronze → Databricks/PySpark → Gold → dbt → Synapse → BI
+```
+
+The repository does not include an Azure subscription or credentials, so it does not claim that a live ADF, ADLS, Databricks, dbt, or Synapse run occurred.
+
+For an Azure deployment, the files under `adf/`, `databricks/`, `dbt/`, and `synapse/` provide the starting implementation. `docs/runbook.md` lists the checks to perform after a cloud load.
+
+## 🧪 Testing and CI
+
+Run locally:
+
+```bash
+pytest -q
+```
+
+GitHub Actions runs the test suite on pushes and pull requests.
+
+## ⚠️ RUL note
+
+The FD001 test RUL values are ground-truth labels supplied for benchmark evaluation. They are not predictions produced by this project and would not be known to an operator before failure.
+
+The current dashboard is therefore a **benchmark-results dashboard**. A production predictive-maintenance version would train and evaluate an RUL model using only information available at prediction time, then send those predictions through the same downstream reporting layers.
 
 ## 📚 Documentation
 
-- `docs/architecture.md` - platform layout and data grain
-- `docs/data_dictionary.md` - FD001 fields and RUL definitions
-- `docs/runbook.md` - local and Azure setup steps
-- `docs/business_insights.md` - findings and planning interpretation
-- `docs/portfolio_results.md` - results and engineering evidence
-- `reports/README.md` - generated results and how they were produced
+- [`docs/architecture.md`](docs/architecture.md) — platform layout and data grain
+- [`docs/data_dictionary.md`](docs/data_dictionary.md) — dataset fields and definitions
+- [`docs/runbook.md`](docs/runbook.md) — local and Azure setup
+- [`docs/business_insights.md`](docs/business_insights.md) — interpretation of the results
+- [`docs/portfolio_results.md`](docs/portfolio_results.md) — result summary
+- [`reports/README.md`](reports/README.md) — generated result files
 
-## 🔗 Source
+## 🔗 Data source
 
-NASA - C-MAPSS Jet Engine Simulated Data:
+NASA C-MAPSS Jet Engine Simulated Data:  
 https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
-## 🚀 Next steps
+## 🚀 Possible extensions
 
-A fuller deployment could add:
-
-1. Managed Identity and Key Vault
-2. Metadata-driven ADF ingestion
-3. Incremental Delta/ADLS processing
-4. Data governance with Purview or Unity Catalog
-5. A trained and independently evaluated RUL model
-6. Model and data drift monitoring
-7. Azure Monitor / Log Analytics
-8. Environment-specific CI/CD deployment
-9. Maintenance-capacity optimization
+- Train and evaluate an actual RUL prediction model
+- Add incremental Delta Lake processing
+- Add data-quality checks in the pipeline
+- Add model/data drift monitoring
+- Add Azure Monitor and operational logging
+- Add environment-based CI/CD deployment
+- Add maintenance-capacity optimization
 
 ## 👤 Author
 
 **Manish Reddy Kallu**  
 Data Engineering Portfolio
 
-GitHub: https://github.com/manishkallu01-wq  
-LinkedIn: https://www.linkedin.com/in/manish-reddy-kallu/
+GitHub: https://github.com/manishkallu01-wq
 
 > Independent portfolio project using public/simulated data. It is not a NASA, airline, aircraft manufacturer, or certified aviation maintenance system.
