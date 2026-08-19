@@ -1,4 +1,4 @@
-# ✈️ Project Story
+# Project Story
 
 This page is the short version of the project for someone who wants to understand it before opening the code.
 
