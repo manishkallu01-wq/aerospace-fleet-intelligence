@@ -1,21 +1,54 @@
 # Architecture
 
-## Logical flow
+## Data flow
 
-`NASA C-MAPSS → ADF → ADLS Bronze → Databricks/PySpark → ADLS Silver/Gold → dbt → Synapse → Dashboard`
+```text
+NASA C-MAPSS
+      |
+      v
+Azure Data Factory
+      |
+      v
+ADLS Gen2 - Bronze
+      |
+      v
+Databricks / PySpark
+      |
+      +---- Silver: engine x cycle telemetry
+      |
+      +---- Gold: latest engine state
+                    |
+                    v
+                   dbt
+                    |
+                    v
+              Azure Synapse
+                    |
+                    v
+               Dashboard / BI
+```
 
-## Design principles
+The project keeps ingestion, storage, transformation, modeling, and reporting in separate layers. That makes it easier to test each part and replace one component without rewriting the rest of the flow.
 
-1. **Replayability:** raw ingestion remains separate from transformations.
-2. **Separation of concerns:** orchestration, storage, processing, modeling and serving are distinct layers.
-3. **Testability:** data contracts and automated checks sit close to transformation logic.
-4. **Business-first Gold layer:** downstream consumers receive engine-health and maintenance-ready data rather than raw telemetry.
-5. **Security-ready:** managed identity and secret management are preferred over credentials in code.
+## Data grain
 
-## Grain
+The Silver telemetry data is stored at **engine x operating cycle** grain.
 
-The Silver telemetry table is at **engine × operating cycle** grain. The primary Gold analytical record is the latest observed state for each engine.
+The main Gold record represents the latest available state for each engine.
 
-## Production evolution
+## What is implemented
 
-The portfolio implementation can be promoted with metadata-driven ADF pipelines, incremental Delta loads, Unity Catalog/Purview governance, Azure Monitor, environment-specific configuration, CI/CD promotion and managed identities.
+The repository contains:
+
+- ADF dataset and pipeline metadata
+- PySpark transformations for Bronze-to-Silver and Silver-to-Gold processing
+- dbt staging and mart SQL
+- Synapse DDL and reporting views
+- Python analysis and tests
+- a Streamlit dashboard driven by the committed FD001 result file
+
+The Azure files are intended to be configured and run in an Azure environment. The repository does not claim that those cloud resources are currently running.
+
+## Moving toward production
+
+A production deployment would add managed identities, Key Vault, incremental loads, monitoring, data governance, environment-specific configuration, and CI/CD deployment into Azure.
