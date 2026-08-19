@@ -1,6 +1,8 @@
 # Runbook
 
-## Local
+## Run locally
+
+Create a virtual environment, install the project requirements, run the tests, and start the dashboard:
 
 ```bash
 python -m venv .venv
@@ -10,19 +12,30 @@ pytest -q
 streamlit run dashboard/app.py
 ```
 
-## Source data
+The dashboard reads the committed FD001 result file at `reports/fd001_engine_rul.csv`.
 
-Set `CMAPSS_URL` to the current NASA source download URL and run `python scripts/download_cmapss.py`. Full source data stays outside Git history.
+## Download the source data
 
-## Azure
+Set `CMAPSS_URL` to the current NASA C-MAPSS download URL and run:
 
-Provision ADLS Gen2, ADF, Databricks and Synapse. Import the JSON metadata under `adf/`, run the Databricks jobs, publish the Gold output to Synapse, then execute the dbt models/tests.
+```bash
+python scripts/download_cmapss.py
+```
 
-## Operational checks
+The full source dataset is kept outside Git history.
 
-- Verify the ADF copy activity completed.
-- Confirm Bronze file count and source partition.
-- Check duplicate engine/cycle records.
-- Check Silver/Gold row counts and null rates.
-- Run dbt tests before publishing warehouse views.
-- Confirm dashboard freshness timestamp before business use.
+## Azure setup
+
+For an Azure deployment, provision ADLS Gen2, ADF, Databricks, and Synapse. Import the files under `adf/`, configure the linked services and paths for the target environment, then run the PySpark jobs and publish the Gold data to Synapse. The dbt models can then be configured against the warehouse.
+
+The repository contains the deployment files, but the Azure resources and credentials are not included here.
+
+## Checks to run after a cloud load
+
+- Check that the ADF copy completed.
+- Confirm the Bronze file count.
+- Check for duplicate engine/cycle rows.
+- Compare Silver and Gold row counts.
+- Check null rates in the main fields.
+- Run the dbt tests before publishing views.
+- Confirm the dashboard data timestamp before using it for reporting.
