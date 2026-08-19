@@ -10,16 +10,15 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "reports" / "fd001_engine_rul.csv"
 
 st.title("✈️ Aerospace Fleet Intelligence")
-st.caption("FD001 benchmark evaluation • RUL distribution • maintenance prioritization")
+st.caption("NASA FD001 results • RUL distribution • maintenance priorities")
 
 st.info(
-    "Evaluation mode: the dashboard is driven by the committed FD001 ground-truth RUL "
-    "artifact. These labels are used to evaluate the engineering/analytics layer; they "
-    "must not be treated as future RUL known to an operator in a prospective system."
+    "This dashboard uses the true RUL values supplied with the FD001 test set. "
+    "They are used here to show and check the benchmark results, not as live predictions."
 )
 
 if not RESULTS.exists():
-    st.error("Evaluation artifact not found: reports/fd001_engine_rul.csv")
+    st.error("Result file not found: reports/fd001_engine_rul.csv")
     st.stop()
 
 result = pd.read_csv(RESULTS)
@@ -32,7 +31,7 @@ critical = int((rul <= 30).sum())
 high = int(((rul > 30) & (rul <= 60)).sum())
 queue = int((rul <= 60).sum())
 
-st.markdown("### 📊 Evaluation snapshot")
+st.markdown("### 📊 Fleet summary")
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Test engines", len(result))
 c2.metric("Mean RUL", f"{rul.mean():.2f} cycles")
@@ -48,10 +47,10 @@ with left:
         x="true_rul_cycles",
         nbins=18,
         labels={"true_rul_cycles": "True RUL (cycles)"},
-        title="FD001 test-engine remaining useful life",
+        title="FD001 test-engine RUL",
     )
-    fig.add_vline(x=30, line_dash="dash", annotation_text="Critical threshold: 30")
-    fig.add_vline(x=60, line_dash="dash", annotation_text="Queue threshold: 60")
+    fig.add_vline(x=30, line_dash="dash", annotation_text="Critical: 30")
+    fig.add_vline(x=60, line_dash="dash", annotation_text="Queue: 60")
     fig.update_layout(height=420)
     st.plotly_chart(fig, use_container_width=True)
 
@@ -73,19 +72,19 @@ st.dataframe(
     hide_index=True,
 )
 
-st.markdown("### 💡 Technical findings")
+st.markdown("### 💡 Findings")
 a, b, c = st.columns(3)
 a.metric("RUL range", f"{rul.min()}–{rul.max()} cycles")
 b.metric("High-risk tail", f"{critical + high} engines")
 c.metric("Healthy population", f"{int((rul > 90).sum())} engines")
 
-st.markdown("### 🎯 Business interpretation")
+st.markdown("### 🎯 Takeaway")
 st.success(
-    f"{queue}% of the benchmark test fleet falls at or below 60 RUL cycles, including "
-    f"{critical} critical engines and {high} high-risk engines. A planner should use "
-    "the lower tail—not the fleet average alone—to prioritize intervention."
+    f"{queue}% of the test engines are at or below 60 RUL cycles. "
+    f"That includes {critical} engines at or below 30 cycles and {high} engines from 31–60 cycles. "
+    "For this benchmark, the lower end of the RUL distribution is more useful for prioritization than the fleet average alone."
 )
 st.caption(
-    "Source: NASA C-MAPSS FD001 benchmark. Ground-truth RUL is an evaluation label. "
-    "A production deployment would replace it with a prediction/Gold-layer estimate available at decision time."
+    "Source: NASA C-MAPSS FD001. The RUL values shown here are test-set ground truth used for benchmark analysis. "
+    "A predictive version of the dashboard would use model estimates instead."
 )
