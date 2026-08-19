@@ -238,6 +238,8 @@ The reusable functions are in:
 src/aerospace_analytics.py
 ```
 
+For the short project explanation, findings, and reproduction checklist, see [`docs/project_story.md`](docs/project_story.md).
+
 ## ☁️ Azure deployment path
 
 The cloud implementation is organized as:
@@ -274,6 +276,7 @@ GitHub Actions runs the test suite on pushes and pull requests.
 
 ## 📚 Documentation
 
+- [`docs/project_story.md`](docs/project_story.md) — what we did, why, how, lessons, and reproduction
 - [`docs/architecture.md`](docs/architecture.md) — platform layout and data grain
 - [`docs/data_dictionary.md`](docs/data_dictionary.md) — dataset fields and definitions
 - [`docs/runbook.md`](docs/runbook.md) — local and Azure setup
