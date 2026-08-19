@@ -1,6 +1,7 @@
 import pandas as pd
+import pytest
 
-from src.aerospace_analytics import build_evaluation_table, summarize
+from src.aerospace_analytics import build_evaluation_table, load_fd001_rul, summarize
 
 
 def test_risk_bands_are_valid():
@@ -23,3 +24,17 @@ def test_summary_counts_are_reconciled():
     assert metrics["high"] == 1
     assert metrics["watch"] == 1
     assert metrics["healthy"] == 1
+
+
+def test_fd001_loader_requires_100_engines(tmp_path):
+    path = tmp_path / "RUL_FD001.txt"
+    path.write_text("\n".join(["10"] * 99))
+    with pytest.raises(ValueError, match="Expected 100 FD001 test engines"):
+        load_fd001_rul(path)
+
+
+def test_fd001_loader_rejects_missing_values(tmp_path):
+    path = tmp_path / "RUL_FD001.txt"
+    path.write_text("\n".join(["10"] * 99 + [""]))
+    with pytest.raises(ValueError, match="missing values"):
+        load_fd001_rul(path)
