@@ -1,4 +1,4 @@
-# 🎨 Project visuals
+# Project visuals
 
 This folder contains the visuals used by the project:
 
