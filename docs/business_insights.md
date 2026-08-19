@@ -1,55 +1,42 @@
-# 📊 Business Insights & Decision Framework
+# Business Insights
 
-## Why this project matters
+## What the analysis shows
 
-Aerospace telemetry has value only when it can be converted into a repeatable decision workflow. This project demonstrates the engineering path from engine-cycle observations to an analytical maintenance-prioritization layer.
+The project starts with engine-cycle data and ends with a simple maintenance-priority view. The point is not to claim a production airline system. It is to show how the data could be organized and used by a data engineering team.
 
-## 🔎 Insight 1 — prioritize before failure
+## 1. The lower tail matters
 
-NASA C-MAPSS FD001 contains run-to-failure training trajectories and truncated test trajectories. The benchmark's true RUL vector exists for **evaluation**, not as information available to an operator before failure.
+The FD001 test set has a mean RUL of **75.52 cycles**, but the values range from **7 to 145 cycles**. Looking only at the average hides the engines that are much closer to the end of their simulated run.
 
-**Decision framing:** evaluate a prospective RUL model against the ground truth, then use the model's prediction—not the future label—to rank engines operationally.
+For this dataset, the first engines to review are therefore the ones with the lowest RUL.
 
-## ⏱️ Insight 2 — RUL is a planning measure
+## 2. The maintenance queue depends on the threshold
 
-RUL is expressed in operating cycles. In the committed FD001 evidence, the mean is **75.52 cycles**, the median is **86**, and the observed range is **7–145 cycles**.
+For this project, engines at or below 60 cycles are placed in the planning queue.
 
-**Decision:** do not use the mean alone. The lower tail contains the engines that would require the earliest attention.
+That gives:
 
-## 🚦 Insight 3 — transparent evaluation bands
+- **39 of 100 engines** in the queue
+- **25 of 100 engines** at or below 30 cycles
+- **15 engines** between 61 and 90 cycles
+- **46 engines** above 90 cycles
 
-For the benchmark report, the project uses simple thresholds to turn the ground-truth evaluation vector into an explainable planning view:
+The thresholds are only used to organize this benchmark analysis. They are not aircraft maintenance limits.
 
-| RUL | Band | Decision framing |
-|---:|---|---|
-| ≤30 | 🔴 CRITICAL | Immediate review |
-| 31–60 | 🟠 HIGH | Schedule intervention |
-| 61–90 | 🟡 WATCH | Increase monitoring |
-| >90 | 🟢 HEALTHY | Routine monitoring |
+## 3. A useful output is more than a model score
 
-These thresholds are **portfolio analysis conventions**, not aviation maintenance limits.
+A planner usually needs a list that can be sorted and reviewed. The project therefore carries RUL, risk band, and priority into the analytical layer instead of stopping at the raw sensor data.
 
-## 🔧 Insight 4 — analytics must become an action
+## 4. Benchmark labels are not live predictions
 
-A useful engineering product should expose a ranked maintenance queue, not just a model score. The dbt and Synapse layers therefore provide a queue-shaped analytical contract.
+NASA provides the true RUL vector for the FD001 test set so that predictions can be evaluated. Those values would not be available to an operator before failure.
 
-For the executed FD001 evidence, **39 of 100 engines (39%)** are at or below 60 cycles and **25 (25%)** are at or below 30 cycles.
+The current dashboard uses the labels because it is showing benchmark results. A production version would replace them with predictions from a trained model using data available at that point in time.
 
-## 📈 Insight 5 — separate benchmark truth from prospective prediction
+## 5. Costs are deliberately left out
 
-The repository intentionally has two analytical states:
+There is no credible dollar-savings number in this repository because the benchmark does not contain airline maintenance costs, labor rates, downtime costs, or real intervention decisions. Adding a savings figure without those inputs would just be a guess.
 
-1. **Evaluation:** true RUL labels are used to measure and inspect benchmark behavior.
-2. **Prospective production design:** a separately trained/evaluated RUL model supplies predictions from data available at decision time.
+## What I would do next
 
-Keeping those states separate prevents target leakage and makes the portfolio more credible.
-
-## 💰 Insight 6 — keep economics explicit
-
-Maintenance cost, downtime cost and intervention capacity are scenario inputs. The repository does **not** claim fabricated dollar savings from simulated data.
-
-## 🎯 Interview takeaway
-
-> **I built the data-platform design and executed the benchmark evidence layer end-to-end, then separated evaluation truth from the prospective production architecture so future RUL labels are never presented as operationally available information.**
-
-That distinction demonstrates data engineering maturity as well as analytics awareness.
+If this moved beyond the portfolio stage, I would add a trained RUL model, prediction-time feature checks, model monitoring, and a maintenance-capacity rule. The same Silver/Gold structure could then support the model and the reporting layer.
