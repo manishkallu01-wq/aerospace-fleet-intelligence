@@ -3,7 +3,7 @@ from pathlib import Path
 import ast, json, sys
 
 ROOT=Path(__file__).resolve().parents[1]
-required=["README.md","src/aerospace_analytics.py","scripts/build_fd001_results.py","tests/test_health_model.py","reports/fd001_engine_rul.csv","adf/pipelines/pl_aerospace_ingestion.json","dbt/dbt_project.yml","synapse/01_tables.sql"]
+required=["README.md","src/aerospace_analytics.py","scripts/build_fd001_results.py","tests/test_health_model.py","reports/fd001_engine_rul.csv","data/reference/RUL_FD001.txt","adf/pipelines/pl_aerospace_ingestion.json","dbt/dbt_project.yml","synapse/01_tables.sql"]
 errors=[f"missing: {p}" for p in required if not (ROOT/p).is_file()]
 for path in list((ROOT/"src").glob("*.py"))+list((ROOT/"scripts").glob("*.py"))+list((ROOT/"dashboard").glob("*.py")):
     try: ast.parse(path.read_text(encoding="utf-8"),filename=str(path))

@@ -1,17 +1,20 @@
 """Build the engine-level FD001 result file used by the dashboard."""
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from src.aerospace_analytics import build_evaluation_table, load_fd001_rul
 
-ROOT = Path(__file__).resolve().parents[1]
-INPUT = ROOT / "data" / "raw" / "RUL_FD001.txt"
+INPUT = ROOT / "data" / "reference" / "RUL_FD001.txt"
 OUTPUT = ROOT / "reports" / "fd001_engine_rul.csv"
 
 
 def main() -> None:
     if not INPUT.exists():
         raise SystemExit(
-            "Missing data/raw/RUL_FD001.txt. Download the NASA C-MAPSS FD001 data first."
+            "Missing data/reference/RUL_FD001.txt."
         )
 
     rul = load_fd001_rul(INPUT)
