@@ -1,4 +1,4 @@
-# 🛰️ Raw data
+# Raw data
 
 The full NASA C-MAPSS archive is not committed to Git because it is unnecessary for the source repository and makes cloning heavier.
 
