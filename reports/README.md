@@ -2,7 +2,7 @@
 
 This folder contains the main analytical output from the NASA C-MAPSS FD001 analysis.
 
-![FD001 execution results](fd001_execution_results.svg)
+![FD001 execution results](../assets/fd001-execution-results.svg)
 
 ## 📌 Key takeaways
 
@@ -50,7 +50,7 @@ The ten lowest-RUL engines are:
 ## 📁 Files
 
 - `fd001_engine_rul.csv` — one result row for each test engine
-- `fd001_execution_results.svg` — visual summary built from the result CSV
+- `../assets/fd001-execution-results.svg` — visual summary built from the result CSV
 
 ## ▶️ Reproduce
 

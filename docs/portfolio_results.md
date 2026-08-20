@@ -1,6 +1,6 @@
 # 📈 Project Results
 
-![FD001 execution results](../reports/fd001_execution_results.svg)
+![FD001 execution results](../assets/fd001-execution-results.svg)
 
 ## 🛰️ Dataset
 
